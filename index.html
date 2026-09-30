@@ -1,0 +1,3649 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Jardin du Désert — State-Based Hospitality System</title>
+<meta name="description" content="A private intellectual system for 22 selected hospitality groups worldwide. One State. One scent. One ritual. One private guest access." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:        #F4F4F2;
+    --bg-warm:   #EAEAE7;
+    --ink:       #111110;
+    --ink-soft:  #292927;
+    --muted:     #8C8C88;
+    --line:      #DEDEDB;
+    --dark:      #111110;
+    --dark-ink:  #F4F4F2;
+    --white:     #FFFFFF;
+    --copper:    #C58452;
+    --copper-deep:#A66A3F;
+    --copper-light:#F0C79B;
+    --copper-grad: linear-gradient(92deg, #A66A3F 0%, #C58452 28%, #D6A06D 50%, #F0C79B 68%, #B47749 88%, #A66A3F 100%);
+
+    --serif: "Cormorant Garamond", "Freight Display Pro", "Editorial New", Georgia, serif;
+    --sans:  "Inter", "Neue Haas Grotesk", "Helvetica Neue", Arial, sans-serif;
+
+    --ease: cubic-bezier(.22,.8,.28,1);
+    --ease-lux: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-line: cubic-bezier(0.5, 0, 0.2, 1);
+    --pad:  clamp(24px, 5vw, 80px);
+    --pad-y: clamp(80px, 12vh, 160px);
+    --maxw: 1240px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:15px;
+    line-height:1.65;
+    font-weight:400;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--copper);color:#fff}
+
+  a{color:inherit;text-decoration:none}
+  img,svg{display:block;max-width:100%}
+
+  .hdr{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 26px var(--pad);
+    background: rgba(245,245,245,0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom:1px solid transparent;
+    transition: padding .5s var(--ease), background .5s var(--ease), border-color .5s var(--ease);
+  }
+  .hdr.scrolled{
+    padding: 14px var(--pad);
+    background: rgba(245,245,245,0.88);
+    border-bottom-color: var(--line);
+  }
+  .hdr.on-dark{
+    background: rgba(23,23,22,0.65);
+    border-bottom-color: transparent;
+  }
+  .hdr.on-dark .hdr__brand,
+  .hdr.on-dark .hdr__nav a{ color:#E9E4D9; }
+  .hdr.on-dark .hdr__cta{ border-color:#E9E4D9; color:#E9E4D9; }
+  .hdr.on-dark .hdr__cta:hover{ background:#E9E4D9; color:#171716; }
+  .hdr__brand{
+    font-family:var(--sans);
+    font-size:11px;
+    letter-spacing:.34em;
+    text-transform:uppercase;
+    font-weight:500;
+    color:var(--ink);
+  }
+  .hdr__nav{
+    display:flex; align-items:center; gap:22px;
+    font-family:var(--sans);
+    font-size:10.5px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-weight:400;
+  }
+  @media (max-width: 1180px){ .hdr__nav{ gap:16px; font-size:10px; letter-spacing:.16em; } }
+  .hdr__nav a{ transition: color .3s var(--ease); }
+  .hdr__nav a:hover{ color: var(--ink); }
+  .hdr__cta{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:10px 20px;
+    border:1px solid var(--copper);
+    color:var(--copper);
+    font-family:var(--sans);
+    font-size:10px;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    font-weight:400;
+    transition: background .4s var(--ease-lux), color .4s var(--ease-lux), border-color .4s var(--ease-lux);
+  }
+  .hdr__cta:hover{ background: var(--copper-grad); color:#fff; border-color:transparent; }
+  @media (max-width: 960px){
+    .hdr__nav{ display:none; }
+    .hdr{ padding: 18px 24px; }
+  }
+
+  .section{
+    padding: var(--pad-y) var(--pad);
+    position:relative;
+  }
+  .section--dark{ background:var(--dark); color:var(--dark-ink); }
+  .section--warm{ background:var(--bg-warm); }
+  .container{ max-width: var(--maxw); margin: 0 auto; }
+  .container--narrow{ max-width: 880px; margin: 0 auto; }
+
+  .eyebrow{
+    font-family:var(--sans);
+    font-size:11px;
+    letter-spacing:.36em;
+    text-transform:uppercase;
+    color:var(--copper);
+    font-weight:500;
+    margin:0 0 28px;
+    display:flex; align-items:center; gap:14px;
+  }
+  .eyebrow .num{
+    color:var(--muted);
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:15px;
+    letter-spacing:.05em;
+    text-transform:none;
+    font-weight:300;
+  }
+  .section--dark .eyebrow{ color: var(--copper); }
+  .section--dark .eyebrow .num{ color:#8A8A8A; }
+
+  h1,h2,h3,h4{
+    font-family:var(--serif);
+    font-weight:300;
+    color:var(--ink);
+    margin:0;
+    letter-spacing:.005em;
+  }
+  h1{ font-weight:300; }
+  h2, h3{ font-weight:300; }
+
+  .copper-metal{
+    background: var(--copper-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  .copper-metal em, em.copper-metal{
+    background: var(--copper-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .section--dark h1,.section--dark h2,.section--dark h3,.section--dark h4{ color: var(--dark-ink); }
+
+  h2.title{
+    font-size: clamp(38px, 5.6vw, 72px);
+    line-height:1.1;
+    margin: 0 0 28px;
+    max-width: 22ch;
+    font-weight: 300;
+    letter-spacing: 0;
+  }
+  h2.title em, .hero h1 em, .scene-text em, #system .sys-header h2 em, .proof__title em, .value__title em, .author-lede em, .author-claim em, .dots-lede em, .dots-lede span{
+    font-style: italic; font-weight:200;
+    letter-spacing: .01em;
+    background: var(--copper-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  h3.subtitle{
+    font-size: clamp(22px, 2.4vw, 30px);
+    line-height:1.35;
+    font-style:italic;
+    color:var(--ink-soft);
+    font-weight:300;
+    margin: 0 0 22px;
+    max-width: 34ch;
+  }
+  .section--dark h3.subtitle{ color: #C4C4C4; }
+
+  p.body{
+    font-size: 16.5px;
+    line-height:1.72;
+    color:var(--ink-soft);
+    max-width: 62ch;
+    margin: 0 0 18px;
+    font-weight:400;
+  }
+  .section--dark p.body{ color:#B0B0B0; }
+  p.small{
+    font-size: 12.5px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-weight:500;
+  }
+
+  .rule{
+    width:56px; height:1px; background:var(--copper);
+    margin: 0 0 34px;
+  }
+
+  .hero{
+    min-height: 100vh;
+    display:flex; align-items:center;
+    padding: 160px var(--pad) 120px;
+    position:relative;
+    background:var(--bg);
+    overflow:hidden;
+  }
+  .hero__grid{
+    max-width: 1080px;
+    margin: 0 auto;
+    width:100%;
+    text-align:left;
+  }
+  .hero__thread{
+    width:1px; height: 56px; background: var(--copper); margin: 0 0 46px;
+    transform-origin: top;
+    transform: scaleY(0);
+    animation: threadDrop 1.6s var(--ease) .2s forwards;
+  }
+  @keyframes threadDrop{ to{ transform: scaleY(1); } }
+
+  .hero h1{
+    font-size: clamp(40px, 6.4vw, 84px);
+    line-height:1.1;
+    letter-spacing: 0;
+    font-weight:300;
+    margin:0 0 60px;
+    color:var(--ink);
+    max-width: 22ch;
+  }
+  .hero h1 em{ font-style:italic; font-weight:300; }
+  .hero h1 .tw{
+    display:inline-block;
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(3px);
+    animation: typeSetIn 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @keyframes typeSetIn{
+    to{ opacity:1; transform:none; filter: blur(0); }
+  }
+
+  .hero__stanza{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:300;
+    font-size: clamp(22px, 2.8vw, 36px);
+    line-height:1.35;
+    color:var(--ink-soft);
+    margin: 0 0 52px;
+    max-width: 20ch;
+  }
+  .hero__stanza .line{
+    display:block;
+    overflow:hidden;
+  }
+  .hero__stanza .line span{
+    display:block;
+    transform: translateY(102%);
+    opacity:0;
+    animation: stanzaUp 1s var(--ease) forwards;
+  }
+  @keyframes stanzaUp{ to{ transform: translateY(0); opacity:1; } }
+
+  .hero__def{
+    font-family:var(--sans);
+    font-size:12px;
+    letter-spacing:.32em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin: 0 0 34px;
+    opacity:0;
+    font-weight:300;
+    animation: fadeSoft 1.4s var(--ease) 5.0s forwards;
+  }
+  @keyframes fadeSoft{ to{ opacity:1; } }
+  .hero__cta{
+    opacity:0;
+    animation: fadeSoft 1.4s var(--ease) 5.4s forwards;
+  }
+
+  .btn{
+    display:inline-flex; align-items:center; gap:14px;
+    padding: 17px 30px;
+    font-family:var(--sans);
+    font-size:11px;
+    letter-spacing:.32em;
+    text-transform:uppercase;
+    font-weight:500;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:var(--bg);
+    cursor:pointer;
+    transition: background .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease);
+  }
+  .btn:hover{ background:transparent; color:var(--ink); }
+  .btn--copper{
+    background: transparent;
+    border: 1px solid var(--copper);
+    color: var(--copper);
+    padding: 15px 32px;
+    letter-spacing: .36em;
+    font-weight: 400;
+  }
+  .btn--copper:hover{
+    background: var(--copper-grad);
+    color: #fff;
+    border-color: transparent;
+    -webkit-background-clip: border-box; background-clip: border-box; -webkit-text-fill-color:#fff;
+  }
+  .btn--arrow-only{
+    width: 68px; height: 68px; padding: 0;
+    border-radius: 50%;
+    letter-spacing: 0;
+    font-size: 22px;
+    display: inline-flex; align-items:center; justify-content:center;
+  }
+  .btn--arrow-only .btn__arrow{
+    display: inline-block;
+    background: var(--copper-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: transform .4s var(--ease-lux);
+  }
+  .btn--arrow-only:hover .btn__arrow{
+    -webkit-text-fill-color: #fff;
+    background: none;
+    transform: translateX(5px);
+  }
+  .btn__arrow{ display:inline-block; transition: transform .35s var(--ease); }
+  .btn:hover .btn__arrow{ transform: translateX(4px); }
+
+  .hero__signature{
+    margin-top: 34px;
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:14px;
+    color:var(--muted);
+  }
+
+  /* ---------- LINE DIAGRAMS ---------- */
+  .diagram-wrap{
+    margin: 60px 0 40px;
+    padding: 60px 0 30px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .diagram-title{
+    font-family:var(--sans);
+    font-size:10.5px;
+    letter-spacing:.36em;
+    text-transform:uppercase;
+    color:var(--muted);
+    text-align:center;
+    margin: 0 0 44px;
+  }
+  .diagram svg{ width:100%; height:auto; display:block; overflow:visible; }
+  .diagram .stroke{
+    stroke: var(--ink);
+    stroke-width: 1;
+    fill: none;
+    stroke-linecap: round;
+  }
+  .diagram .stroke--copper{ stroke: var(--copper); stroke-width: 1.25; }
+  .diagram .dot{ fill: var(--bg-warm); stroke: var(--ink); stroke-width: 1; }
+  .diagram .dot--copper{ fill: var(--copper); stroke: var(--copper); }
+  .diagram .label-serif{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:400;
+    fill: var(--ink);
+  }
+  .diagram .label-sans{
+    font-family:var(--sans);
+    font-size:10px;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    fill: var(--muted);
+  }
+  .diagram .label-sans--ink{ fill: var(--ink); }
+
+  /* draw-on-scroll */
+  .draw-path{
+    stroke-dasharray: var(--len, 1000);
+    stroke-dashoffset: var(--len, 1000);
+    transition: stroke-dashoffset 2.2s var(--ease);
+  }
+  .diagram.in .draw-path{ stroke-dashoffset: 0; }
+  .fade-in{ opacity:0; transition: opacity .9s var(--ease); }
+  .diagram.in .fade-in{ opacity:1; }
+  .fade-in.d1{ transition-delay:.4s; }
+  .fade-in.d2{ transition-delay:.7s; }
+  .fade-in.d3{ transition-delay:1.0s; }
+  .fade-in.d4{ transition-delay:1.3s; }
+  .fade-in.d5{ transition-delay:1.6s; }
+  .fade-in.d6{ transition-delay:1.9s; }
+  .fade-in.d7{ transition-delay:2.2s; }
+  .fade-in.d8{ transition-delay:2.4s; }
+  .fade-in.d9{ transition-delay:2.6s; }
+
+  /* System diagram — desktop horizontal, mobile stack */
+  .sys-diagram-desktop{ display:block; }
+  .sys-diagram-mobile{ display:none; }
+  @media(max-width:820px){
+    .sys-diagram-desktop{ display:none; }
+    .sys-diagram-mobile{ display:block; }
+  }
+
+  /* ---- System pin scene ---- */
+  #system .stage-eyebrow{
+    position:absolute; top: 88px; left: var(--pad);
+    font-family:var(--sans); font-size:11px; letter-spacing:.36em; text-transform:uppercase;
+    color:var(--copper); display:flex; gap:14px; align-items:center;
+  }
+  #system .stage-eyebrow .num{
+    font-family:var(--serif); font-style:italic; color:var(--muted); text-transform:none; font-size:15px;
+  }
+  #system .sys-header{
+    margin: 0 auto 40px;
+    max-width: 900px;
+    transition: transform .9s var(--ease-lux), opacity .9s var(--ease-lux);
+    transform-origin: top center;
+  }
+  #system .sys-header h2{
+    font-size: clamp(34px, 4.6vw, 60px);
+    line-height:1.08; letter-spacing:-.01em; font-weight:300; margin:0 0 18px;
+    color:var(--ink);
+  }
+  #system .sys-header h2 em{ font-style:italic; color:var(--copper); font-weight:300; }
+  #system .sys-header p{
+    font-family:var(--serif); font-style:italic; font-weight:300;
+    font-size: clamp(18px, 1.8vw, 22px); color:var(--ink-soft); margin:0;
+  }
+  #system.pin-section .pin-stage:not(.stage-1) .sys-header{
+    transform: scale(.72) translateY(-24px); opacity: .55;
+  }
+
+  /* SVG progressive nodes */
+  .sys-node{
+    opacity:0;
+    transition: opacity .8s var(--ease-lux);
+  }
+  .sys-node--label{ transition: opacity .8s var(--ease-lux); }
+  .sys-line-seg{
+    stroke: var(--copper); stroke-width: 0.9; fill:none; stroke-linecap:round;
+    stroke-dasharray: 260;
+    stroke-dashoffset: 260;
+    transition: stroke-dashoffset 1.1s var(--ease-line);
+  }
+  .sys-branch{
+    stroke: var(--copper); stroke-width: 0.9; fill:none; stroke-linecap:round;
+    stroke-dasharray: 460;
+    stroke-dashoffset: 460;
+    transition: stroke-dashoffset 1s var(--ease-line);
+  }
+
+  /* stage rules — reveal one node per stage */
+  #system .pin-stage.stage-2 .n1,
+  #system .pin-stage.stage-3 .n1, #system .pin-stage.stage-3 .n2, #system .pin-stage.stage-3 .seg1,
+  #system .pin-stage.stage-4 .n1, #system .pin-stage.stage-4 .n2, #system .pin-stage.stage-4 .n3, #system .pin-stage.stage-4 .seg1, #system .pin-stage.stage-4 .seg2,
+  #system .pin-stage.stage-5 .n1, #system .pin-stage.stage-5 .n2, #system .pin-stage.stage-5 .n3, #system .pin-stage.stage-5 .n4, #system .pin-stage.stage-5 .seg1, #system .pin-stage.stage-5 .seg2, #system .pin-stage.stage-5 .seg3,
+  #system .pin-stage.stage-6 .n1, #system .pin-stage.stage-6 .n2, #system .pin-stage.stage-6 .n3, #system .pin-stage.stage-6 .n4, #system .pin-stage.stage-6 .n5, #system .pin-stage.stage-6 .seg1, #system .pin-stage.stage-6 .seg2, #system .pin-stage.stage-6 .seg3, #system .pin-stage.stage-6 .seg4,
+  #system .pin-stage.stage-7 .n1, #system .pin-stage.stage-7 .n2, #system .pin-stage.stage-7 .n3, #system .pin-stage.stage-7 .n4, #system .pin-stage.stage-7 .n5, #system .pin-stage.stage-7 .n6, #system .pin-stage.stage-7 .seg1, #system .pin-stage.stage-7 .seg2, #system .pin-stage.stage-7 .seg3, #system .pin-stage.stage-7 .seg4, #system .pin-stage.stage-7 .seg5,
+  #system .pin-stage.stage-8 .n1, #system .pin-stage.stage-8 .n2, #system .pin-stage.stage-8 .n3, #system .pin-stage.stage-8 .n4, #system .pin-stage.stage-8 .n5, #system .pin-stage.stage-8 .n6, #system .pin-stage.stage-8 .b1, #system .pin-stage.stage-8 .b2, #system .pin-stage.stage-8 .b3, #system .pin-stage.stage-8 .seg1, #system .pin-stage.stage-8 .seg2, #system .pin-stage.stage-8 .seg3, #system .pin-stage.stage-8 .seg4, #system .pin-stage.stage-8 .seg5, #system .pin-stage.stage-8 .br1, #system .pin-stage.stage-8 .br2, #system .pin-stage.stage-8 .br3{
+    opacity:1; transform:none;
+  }
+  #system .pin-stage.stage-3 .seg1,
+  #system .pin-stage.stage-4 .seg1, #system .pin-stage.stage-4 .seg2,
+  #system .pin-stage.stage-5 .seg1, #system .pin-stage.stage-5 .seg2, #system .pin-stage.stage-5 .seg3,
+  #system .pin-stage.stage-6 .seg1, #system .pin-stage.stage-6 .seg2, #system .pin-stage.stage-6 .seg3, #system .pin-stage.stage-6 .seg4,
+  #system .pin-stage.stage-7 .seg1, #system .pin-stage.stage-7 .seg2, #system .pin-stage.stage-7 .seg3, #system .pin-stage.stage-7 .seg4, #system .pin-stage.stage-7 .seg5,
+  #system .pin-stage.stage-8 .seg1, #system .pin-stage.stage-8 .seg2, #system .pin-stage.stage-8 .seg3, #system .pin-stage.stage-8 .seg4, #system .pin-stage.stage-8 .seg5{
+    stroke-dashoffset: 0;
+  }
+  #system .pin-stage.stage-8 .br1{ stroke-dashoffset: 0; transition-delay: 0s; }
+  #system .pin-stage.stage-8 .br2{ stroke-dashoffset: 0; transition-delay: .5s; }
+  #system .pin-stage.stage-8 .br3{ stroke-dashoffset: 0; transition-delay: 1s; }
+  #system .pin-stage.stage-8 .sys-line-seg,
+  #system .pin-stage.stage-8 .sys-branch{
+    filter: drop-shadow(0 0 3px rgba(240, 199, 155, 0.55));
+    transition: stroke-dashoffset 1.1s var(--ease-line), filter 1.2s var(--ease-lux) 1.6s;
+  }
+
+  /* Glass on open FAQ answer */
+  #faq details[open]{
+    background: rgba(255,255,255,0.5);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 28px 24px;
+    margin: 0 -24px;
+    border-left: 1px solid rgba(255,255,255,0.4);
+    border-right: 1px solid rgba(255,255,255,0.4);
+  }
+  #faq details[open] > .faq__body{
+    padding-top: 8px;
+  }
+
+  /* Active node emphasis: previous nodes gently muted */
+  #system .pin-stage.stage-3 .n1,
+  #system .pin-stage.stage-4 .n1, #system .pin-stage.stage-4 .n2,
+  #system .pin-stage.stage-5 .n1, #system .pin-stage.stage-5 .n2, #system .pin-stage.stage-5 .n3,
+  #system .pin-stage.stage-6 .n1, #system .pin-stage.stage-6 .n2, #system .pin-stage.stage-6 .n3, #system .pin-stage.stage-6 .n4,
+  #system .pin-stage.stage-7 .n1, #system .pin-stage.stage-7 .n2, #system .pin-stage.stage-7 .n3, #system .pin-stage.stage-7 .n4, #system .pin-stage.stage-7 .n5,
+  #system .pin-stage.stage-8 .n1, #system .pin-stage.stage-8 .n2, #system .pin-stage.stage-8 .n3, #system .pin-stage.stage-8 .n4, #system .pin-stage.stage-8 .n5{
+    opacity: 0.45;
+  }
+
+  /* ---- Ombré tonal flow (Value → Why Now → Twenty-Two) ---- */
+  .tonal-flow{
+    position:relative;
+    background: linear-gradient(
+      to bottom,
+      #FFFFFF 0%,
+      #F4F4F2 14%,
+      #DEDEDB 28%,
+      #A8A8A5 42%,
+      #6E6E6B 56%,
+      #3A3A38 72%,
+      #1E1E1D 88%,
+      #111110 100%
+    );
+  }
+  .tonal-flow > .section{ background: transparent !important; }
+  .tonal-flow #value{ color: var(--ink); }
+  .tonal-flow #why-now{ color:#FFFFFF; }
+  .tonal-flow #selection{ color:#F4F4F2; }
+  .tonal-flow #why-now h2.title,
+  .tonal-flow #selection h2.title{ color:#FFFFFF; }
+
+  /* Why Now — progressive dim */
+  #why-now .proofs{ position:relative; }
+  #why-now .proof{
+    opacity: 1;
+    transition: opacity .9s var(--ease-lux);
+  }
+  #why-now .proof.dim{ opacity: .28; }
+  #why-now .proof__title{ color:#FFFFFF; }
+  #why-now .proof__body{ color:#E9E4D9; }
+  #why-now .proof:nth-child(1) .proof__body, #why-now .proof:nth-child(1) .proof__src,
+  #why-now .proof:nth-child(2) .proof__body, #why-now .proof:nth-child(2) .proof__src{ color:#8F897E; }
+
+  /* Twenty-Two — phrase-by-phrase reveal */
+  #selection .selection-grid > div:last-child .title,
+  #selection .selection-grid > div:last-child .body,
+  #selection .principles{
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity .9s var(--ease-lux), transform .9s var(--ease-lux);
+  }
+  #selection.in-selection .selection-grid > div:last-child .title{ opacity:1; transform:none; transition-delay:.2s; }
+  #selection.in-selection .selection-grid > div:last-child .body{ opacity:1; transform:none; transition-delay:.7s; }
+  #selection.in-selection .principles{ opacity:1; transform:none; transition-delay: 1.1s; }
+  #selection .dots-lede{
+    opacity:0; transform: translateY(8px);
+    transition: opacity .9s var(--ease-lux), transform .9s var(--ease-lux);
+    transition-delay: 1.0s;
+  }
+  #selection.in-selection .dots-lede{ opacity:1; transform:none; }
+
+  @keyframes twinkle{
+    0%, 100% { opacity: 0.32; filter: drop-shadow(0 0 1.5px rgba(240,199,155,0.35)); }
+    50%      { opacity: 1;    filter: drop-shadow(0 0 6px rgba(240,199,155,1)); }
+  }
+
+  /* ---- Value — traveling light ---- */
+  .value{ position:relative; transition: background .8s var(--ease-lux), border-color .8s var(--ease-lux); }
+  .value.lit{
+    background: radial-gradient(120% 90% at 30% 20%, rgba(197,132,82,0.10), rgba(244,244,242,0) 70%), var(--bg);
+  }
+  .value.lit .value__title{ color: var(--ink); }
+
+  /* ---- FAQ staggered entry + divider draw ---- */
+  #faq details{ position:relative; }
+  #faq details::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:1px;
+    background: var(--line);
+    transform: scaleX(0); transform-origin: left center;
+    transition: transform 1s var(--ease-line);
+  }
+  #faq.in details::before{ transform: scaleX(1); }
+  #faq details:nth-child(1)::before{ transition-delay:.1s; }
+  #faq details:nth-child(2)::before{ transition-delay:.25s; }
+  #faq details:nth-child(3)::before{ transition-delay:.4s; }
+  #faq details:nth-child(4)::before{ transition-delay:.55s; }
+  #faq details:nth-child(5)::before{ transition-delay:.7s; }
+  #faq details > summary, #faq details > .faq__body{
+    opacity:0; transform: translateY(10px);
+    transition: opacity .8s var(--ease-lux), transform .8s var(--ease-lux);
+  }
+  #faq.in details:nth-child(1) > summary{ opacity:1; transform:none; transition-delay:.2s; }
+  #faq.in details:nth-child(2) > summary{ opacity:1; transform:none; transition-delay:.35s; }
+  #faq.in details:nth-child(3) > summary{ opacity:1; transform:none; transition-delay:.5s; }
+  #faq.in details:nth-child(4) > summary{ opacity:1; transform:none; transition-delay:.65s; }
+  #faq.in details:nth-child(5) > summary{ opacity:1; transform:none; transition-delay:.8s; }
+  #faq details[open] > .faq__body{ opacity:1; transform:none; }
+
+  /* Form — sequential field reveal */
+  #reviewForm .field, #reviewForm .form__row, #reviewForm .form__submit{
+    opacity:0; transform: translateY(12px);
+    transition: opacity .9s var(--ease-lux), transform .9s var(--ease-lux);
+  }
+  #reviewForm.in > *{ opacity:1; transform:none; }
+  #reviewForm.in > *:nth-child(1){ transition-delay:.15s; }
+  #reviewForm.in > *:nth-child(2){ transition-delay:.35s; }
+  #reviewForm.in > *:nth-child(3){ transition-delay:.55s; }
+  #reviewForm.in > *:nth-child(4){ transition-delay:.85s; }
+  #reviewForm.in > *:nth-child(5){ transition-delay:1.05s; }
+  #reviewForm.in > *:nth-child(6){ transition-delay:1.25s; }
+
+  /* Beyond the Lobby */
+  .btl{
+    display:grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 80px;
+    align-items:center;
+    margin: 40px 0 0;
+  }
+  @media(max-width:900px){ .btl{ grid-template-columns:1fr; gap:40px; } }
+  .btl-caption{
+    text-align:center;
+    font-family:var(--sans);
+    font-size:11px;
+    letter-spacing:.32em;
+    text-transform:uppercase;
+    color:var(--copper);
+    margin-top:20px;
+  }
+  .btl-caption .sep{ color:var(--muted); margin: 0 10px; }
+
+  /* 22 dots */
+  /* 22 stars — Rolls Royce starlight, full-screen scene */
+  .stars-scene{
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+    padding: 100px var(--pad);
+  }
+  .stars22{
+    width: 100%;
+    max-width: 520px;
+    aspect-ratio: 1.6 / 1;
+    display: block;
+    margin: 40px 0 30px;
+    overflow: visible;
+  }
+  .stars22--full{
+    max-width: 96vw;
+    width: 100%;
+    height: 62vh;
+    aspect-ratio: auto;
+    margin: 0 auto 40px;
+  }
+  .stars-caption{
+    margin-top: 40px;
+    text-align: center;
+  }
+  .stars-title{
+    font-family: var(--serif); font-style: italic; font-weight: 200;
+    font-size: clamp(24px, 3vw, 42px);
+    color: var(--dark-ink);
+    line-height: 1.35;
+    letter-spacing: .01em;
+    margin: 0;
+  }
+  .stars-title span{
+    background: var(--copper-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  .narrative-block{
+    max-width: 780px;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  /* Typeset title — same style as hero */
+  .title--typeset{ visibility: visible; }
+  .title--typeset .tw{
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(6px);
+    filter: blur(3px);
+    animation: typeSetIn 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .stars22 .star{
+    fill: url(#starGrad);
+    opacity: 0;
+    transform-origin: center;
+    transform-box: fill-box;
+    transition: opacity 1.4s var(--ease-lux);
+  }
+  .stars22.in .star{
+    opacity: 1;
+    animation: twinkle var(--tw-dur, 4s) ease-in-out var(--tw-delay, 0s) infinite;
+  }
+
+  /* ---- Pin-scroll scenes ---- */
+  .pin-section{ position:relative; }
+  .pin-section.h2{ height: 220vh; }
+  .pin-section.h3{ height: 300vh; }
+  .pin-section.h4{ height: 380vh; }
+  .pin-stage{
+    position: sticky; top: 0; height: 100vh;
+    display:flex; align-items:center; justify-content:center;
+    padding: 0 var(--pad);
+    overflow:hidden;
+  }
+  .pin-stage__inner{ width:100%; max-width: 1200px; margin: 0 auto; }
+
+  /* Missing Layer scene */
+  #missing .stage-eyebrow{
+    position:absolute; top: 100px; left: var(--pad);
+    font-family:var(--sans);
+    font-size:11px; letter-spacing:.36em; text-transform:uppercase;
+    color:var(--copper);
+    display:flex; gap:14px; align-items:center;
+  }
+  #missing .stage-eyebrow .num{
+    font-family:var(--serif); font-style:italic; color:var(--muted); text-transform:none; font-size:15px;
+  }
+  .room-scene{
+    display:grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 60px;
+    align-items:center;
+    width:100%;
+  }
+  @media(max-width:900px){ .room-scene{ grid-template-columns:1fr; gap:30px; } }
+  .room-scene__svg svg{ width:100%; height:auto; overflow:visible; }
+  .room-line{
+    fill:none; stroke:var(--copper); stroke-width:1.4; stroke-linecap:round;
+    stroke-dasharray: 900;
+    stroke-dashoffset: 900;
+    transition: stroke-dashoffset 1.6s var(--ease);
+  }
+  .pin-stage.stage-1 .room-line{ stroke-dashoffset: 620; }
+  .pin-stage.stage-2 .room-line,
+  .pin-stage.stage-3 .room-line{ stroke-dashoffset: 0; }
+
+  .room-text{ position:relative; }
+  .scene-text{
+    font-family:var(--serif);
+    font-weight:300;
+    font-size: clamp(32px, 4.6vw, 60px);
+    line-height:1.12;
+    color:var(--ink);
+    letter-spacing:-.01em;
+    margin: 0;
+    opacity:0;
+    transform: translateY(20px);
+    transition: opacity 1s var(--ease), transform 1s var(--ease);
+  }
+  .scene-text em{ font-style:italic; color:var(--copper); font-weight:300; }
+  .scene-text.s1{ position:relative; }
+  .scene-text.s2{ position:absolute; top:0; left:0; right:0; }
+  .pin-stage.stage-1 .scene-text.s1{ opacity:1; transform:none; }
+  .pin-stage.stage-2 .scene-text.s1,
+  .pin-stage.stage-3 .scene-text.s1{ opacity:0; transform: translateY(-20px); }
+  .pin-stage.stage-2 .scene-text.s2,
+  .pin-stage.stage-3 .scene-text.s2{ opacity:1; transform:none; transition-delay: .4s; }
+
+  .scene-cap{
+    font-family:var(--sans);
+    font-size: 14px;
+    line-height:1.6;
+    color:var(--muted);
+    max-width: 42ch;
+    margin: 34px 0 0;
+    opacity:0;
+    transition: opacity 1s var(--ease) .6s;
+  }
+  .pin-stage.stage-3 .scene-cap{ opacity:1; }
+
+  .steps{
+    display:grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    margin: 40px 0 60px;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  @media(max-width:900px){ .steps{ grid-template-columns:1fr; } }
+
+  .step{
+    padding: 36px 28px 40px;
+    border-right:1px solid var(--line);
+    position:relative;
+  }
+  .step:last-child{ border-right:none; }
+  @media(max-width:900px){
+    .step{ border-right:none; border-bottom:1px solid var(--line); }
+    .step:last-child{ border-bottom:none; }
+  }
+  .step__num{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:15px;
+    color:var(--copper);
+    letter-spacing:.05em;
+    margin-bottom:18px;
+    font-weight:400;
+  }
+  .step__name{
+    font-family:var(--serif);
+    font-size: 26px;
+    line-height:1.15;
+    font-weight:400;
+    color:var(--ink);
+    margin: 0 0 14px;
+    letter-spacing:-.005em;
+  }
+  .step__body{
+    font-size:13.5px;
+    line-height:1.6;
+    color:var(--muted);
+    margin:0;
+  }
+
+  .formula{
+    text-align:center;
+    padding: 50px 24px 20px;
+  }
+  .formula__label{
+    font-family:var(--sans);
+    font-size:10.5px;
+    letter-spacing:.36em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom: 26px;
+  }
+  .formula__line{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:300;
+    font-size: clamp(20px, 2.4vw, 30px);
+    color:var(--ink);
+    line-height:1.5;
+  }
+  .formula__line .sep{ color:var(--copper); margin: 0 12px; font-style:normal; }
+
+  .value-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background:var(--line);
+    margin: 40px 0 40px;
+    border:1px solid var(--line);
+  }
+  .value-grid--4{ grid-template-columns: repeat(4, 1fr); }
+  @media(max-width:900px){ .value-grid, .value-grid--4{ grid-template-columns:1fr; } }
+
+  /* Glass cards */
+  .value-grid--glass{
+    background: transparent;
+    border: none;
+    gap: 24px;
+    margin: 60px 0 40px;
+  }
+  .value-grid--glass .value{
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(16px) saturate(110%);
+    -webkit-backdrop-filter: blur(16px) saturate(110%);
+    border: 1px solid rgba(255,255,255,0.5);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    padding: 44px 30px 46px;
+    transition: background .8s var(--ease-lux), box-shadow .8s var(--ease-lux);
+  }
+  .value-grid--glass .value.lit{
+    background: rgba(255,255,255,0.75);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 20px 60px -30px rgba(0,0,0,0.12);
+  }
+  .value-grid--glass .value__num{ color: var(--copper); font-family: var(--serif); font-style: italic; font-size:15px; font-weight:400; }
+  .value-grid--glass .value__title{ font-weight:300; font-size:22px; letter-spacing:.005em; }
+  .value-grid--glass .value__body{ font-size:13.5px; }
+
+  /* Author section */
+  #author{ text-align:center; padding: 140px var(--pad); }
+  .author-lede{
+    font-family: var(--sans); font-weight: 300;
+    font-size: 12px; letter-spacing: .34em; text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 20px;
+  }
+  .au-verb{
+    display: inline-block;
+    color: var(--ink); letter-spacing: .34em;
+  }
+  .author-name{
+    font-family: var(--serif); font-weight: 200; font-style: italic;
+    font-size: clamp(44px, 6vw, 84px);
+    line-height: 1.1; letter-spacing: .01em;
+    margin: 0 0 34px;
+    background: var(--copper-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  .author-sub{
+    font-family: var(--sans); font-size: 14.5px; line-height:1.65;
+    color: var(--muted); max-width: 56ch; margin: 0 auto 60px; font-weight:400;
+  }
+  .author-role{
+    font-family: var(--serif); font-style: italic; font-weight:300;
+    font-size: clamp(22px, 2.6vw, 32px); color: var(--ink-soft);
+    max-width: 32ch; margin: 0 auto 70px; line-height: 1.4;
+  }
+  .author-claim{
+    font-family: var(--serif); font-weight:300;
+    font-size: clamp(24px, 2.8vw, 36px); line-height:1.35;
+    color: var(--ink); margin: 0 0 60px; max-width: 38ch; margin-left:auto; margin-right:auto;
+  }
+  .author-claim em{
+    font-style: italic; font-weight:300;
+    background: var(--copper-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .author-formula{
+    display: inline-flex; align-items: center; gap: 20px; flex-wrap:wrap; justify-content:center;
+    font-family: var(--sans); font-size: 11px; letter-spacing:.36em; text-transform: uppercase;
+    background: var(--copper-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    padding: 22px 30px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    max-width: 780px;
+  }
+  .author-formula .dot{
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--copper); flex-shrink: 0;
+    -webkit-text-fill-color: initial;
+  }
+  .value{
+    background:var(--bg);
+    padding: 40px 32px 44px;
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .value__num{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:14px;
+    color:var(--copper);
+    letter-spacing:.05em;
+  }
+  .value__title{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:24px;
+    line-height:1.2;
+    color:var(--ink);
+    margin:0;
+  }
+  .value__body{
+    font-size:14px;
+    line-height:1.65;
+    color:var(--muted);
+    margin:0;
+  }
+  .value-punch{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size: clamp(22px, 2.4vw, 30px);
+    line-height:1.4;
+    color:var(--ink);
+    max-width: 46ch;
+    margin: 20px 0 0;
+    font-weight:300;
+  }
+
+  .evidence{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px 80px;
+    margin: 40px 0 40px;
+  }
+  @media(max-width:900px){ .evidence{ grid-template-columns:1fr; gap:40px; } }
+
+  .proofs{
+    margin: 60px 0 0;
+  }
+  .proof{
+    padding: 60px 0;
+    border-top: 1px solid #2A2A2A;
+    display:grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: 40px;
+    align-items:baseline;
+  }
+  .proof:last-child{ border-bottom: 1px solid #2A2A2A; }
+  @media(max-width:820px){
+    .proof{ grid-template-columns: 1fr; gap: 18px; padding: 40px 0; }
+  }
+  .proof__num{
+    display:inline-block;            /* gradient spans only the digits, not the whole column */
+    justify-self:start; align-self:baseline;
+    font-family:var(--serif);
+    font-style:italic;
+    font-size: 40px;
+    font-weight:300;
+    padding-right: .08em;           /* keeps the italic edge inside the gradient */
+    background: linear-gradient(100deg, #D6A06D 0%, #F0C79B 40%, #E6B98A 65%, #C58452 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    letter-spacing: .02em;
+  }
+  .proof__title{
+    font-family:var(--serif);
+    font-weight:200;
+    font-size: clamp(28px, 3.4vw, 46px);
+    line-height:1.15;
+    letter-spacing:-.005em;
+    color: #FFFFFF;
+    margin:0 0 14px;
+    max-width: 22ch;
+  }
+  .proof__body{
+    font-family:var(--sans);
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: #D8CFB8;
+    max-width: 46ch;
+    margin: 0;
+    font-weight: 300;
+  }
+  .proof__src{
+    font-family:var(--sans);
+    font-size:10.5px;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    color: var(--copper);
+    align-self:start;
+  }
+  .proof__link{
+    display: inline-flex; align-items:center; gap:8px;
+    font-family: var(--sans); font-size: 11px; letter-spacing: .24em;
+    text-transform: uppercase; font-weight: 300;
+    position: relative; padding-bottom: 6px;
+    margin-top: 14px;
+    align-self: start;
+    color: #FFFFFF;
+    transition: opacity .3s var(--ease-lux);
+  }
+  .proof__link::after{
+    content:""; position:absolute; left:0; bottom:0; height:1px; width: 100%;
+    background: linear-gradient(90deg,
+      rgba(166,106,63,0.35) 0%,
+      #F0C79B 30%,
+      #D6A06D 50%,
+      #F0C79B 70%,
+      rgba(166,106,63,0.35) 100%);
+    background-size: 220% 100%;
+    background-position: 100% 50%;
+    animation: shimmerLine 3.2s var(--ease-lux) infinite;
+  }
+  @keyframes shimmerLine{
+    0%   { background-position: 100% 50%; }
+    100% { background-position: -100% 50%; }
+  }
+  .proof__link:hover{ color: #F0C79B; }
+
+  /* Glass evidence panel */
+  .proofs--glass{
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 0 40px;
+    margin-top: 40px;
+  }
+  .proofs--glass .proof{ border-top-color: rgba(255,255,255,0.10); }
+  .proofs--glass .proof:last-child{ border-bottom-color: rgba(255,255,255,0.10); }
+
+  .ev__num{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size:14px;
+    color:var(--copper);
+    letter-spacing:.05em;
+    margin-bottom:12px;
+  }
+  .ev__title{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:23px;
+    line-height:1.25;
+    color:var(--ink);
+    margin:0 0 12px;
+  }
+  .section--dark .ev__title{ color:var(--dark-ink); }
+  .ev__body{
+    font-size:14.5px;
+    line-height:1.65;
+    color:var(--muted);
+    margin:0 0 10px;
+  }
+  .section--dark .ev__body{ color:#B0B0B0; }
+  .ev__src{
+    font-family:var(--sans);
+    font-size:10.5px;
+    letter-spacing:.24em;
+    text-transform:uppercase;
+    color:var(--copper);
+  }
+
+  .sources{
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top:1px solid var(--line);
+    font-family:var(--sans);
+    font-size:11.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--muted);
+    line-height:1.9;
+  }
+  .section--dark .sources{ border-top-color:#2A2A2A; color:#8A8A8A; }
+
+  #selection .selection-grid{
+    display:grid;
+    grid-template-columns: .9fr 1.1fr;
+    gap: 80px;
+    align-items:start;
+  }
+  @media(max-width:900px){ #selection .selection-grid{ grid-template-columns:1fr; gap:50px; } }
+
+  .big-22{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:300;
+    font-size: clamp(180px, 22vw, 320px);
+    line-height:.85;
+    color:var(--copper);
+    margin: 0 0 20px;
+    letter-spacing:-.03em;
+  }
+  .big-22__label{
+    font-family:var(--sans);
+    font-size:11px;
+    letter-spacing:.36em;
+    text-transform:uppercase;
+    color:#8A8A8A;
+    margin-top:14px;
+  }
+  .criteria{
+    list-style:none;
+    padding:0;
+    margin: 26px auto 34px;
+    text-align: center;
+    max-width: 620px;
+  }
+  .criteria li{
+    padding: 18px 0;
+    border-bottom:1px solid rgba(255,255,255,0.12);
+    font-family: var(--sans); font-style: normal; font-weight: 300;
+    font-size: 14px;
+    letter-spacing: .04em;
+    line-height:1.6;
+    color: #F0F0EE;
+  }
+  .criteria li:last-child{ border-bottom:none; }
+
+  /* Selection lines — one-by-one reveal */
+  .selection-lines{
+    display: flex; flex-direction: column; gap: 6px;
+    font-family: var(--serif); font-style: italic; font-weight: 200;
+    font-size: clamp(22px, 2.4vw, 30px);
+    color: var(--dark-ink);
+    line-height: 1.35;
+  }
+  .selection-lines .sl{
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 1.1s var(--ease-lux), transform 1.1s var(--ease-lux);
+  }
+  #selection-narrative.in-narrative .selection-lines .sl:nth-child(1){ opacity:1; transform:none; transition-delay: 1.6s; }
+  #selection-narrative.in-narrative .selection-lines .sl:nth-child(2){ opacity:1; transform:none; transition-delay: 2.4s; }
+  #selection-narrative.in-narrative .selection-lines .sl:nth-child(3){ opacity:1; transform:none; transition-delay: 3.2s; color: transparent; background: var(--copper-grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .dots-lede{
+    font-family:var(--serif);
+    font-style:italic;
+    font-size: clamp(20px, 2vw, 26px);
+    line-height:1.45;
+    color: var(--dark-ink);
+    max-width: 22ch;
+    margin: 26px 0 0;
+    font-weight:300;
+  }
+  .dots-lede span{
+    background: var(--copper-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .selection-formula{
+    font-family: var(--serif); font-style: italic;
+    font-size: clamp(18px, 2vw, 24px);
+    line-height:1.5; color: var(--dark-ink); font-weight:300;
+  }
+  .selection-formula .sep{
+    color: var(--copper); margin: 0 10px; font-style: normal;
+  }
+  .principles{
+    margin: 34px 0 0;
+    border-top:1px solid #2A2A2A;
+    padding-top: 22px;
+  }
+  .principles summary{
+    list-style:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:space-between;
+    font-family:var(--sans); font-size:11px; letter-spacing:.32em; text-transform:uppercase;
+    color: var(--dark-ink); font-weight:500;
+    padding: 8px 0;
+  }
+  .principles summary::-webkit-details-marker{ display:none; }
+  .principles summary .plus{
+    font-family:var(--serif); font-weight:300; color: var(--copper); font-size:22px;
+    transition: transform .3s var(--ease);
+  }
+  .principles[open] summary .plus{ transform: rotate(45deg); }
+
+  .faq{ margin: 40px 0 20px; border-top:1px solid var(--line); }
+  .faq details{
+    border-bottom:1px solid var(--line);
+    padding: 28px 0;
+  }
+  .faq summary{
+    list-style:none;
+    cursor:pointer;
+    display:flex; align-items:baseline; justify-content:space-between; gap:24px;
+    font-family:var(--serif);
+    font-size: clamp(20px, 2vw, 26px);
+    font-weight:400;
+    color:var(--ink);
+    line-height:1.3;
+    transition: color .3s var(--ease);
+  }
+  .faq summary::-webkit-details-marker{ display:none; }
+  .faq summary:hover{ color:var(--copper); }
+  .faq summary .plus{
+    font-family:var(--serif);
+    font-weight:300;
+    color:var(--copper);
+    font-size:26px;
+    flex-shrink:0;
+    transition: transform .3s var(--ease);
+  }
+  .faq details[open] summary .plus{ transform: rotate(45deg); }
+  .faq__body{
+    margin: 20px 0 4px;
+    font-size:15.5px;
+    line-height:1.72;
+    color:var(--ink-soft);
+    max-width: 68ch;
+  }
+
+  #review{ background:var(--bg-warm); }
+  .form-intro{
+    max-width: 64ch;
+    margin: 0 0 60px;
+  }
+  .form{ max-width: 780px; }
+  .form__row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap: 28px;
+    margin-bottom: 4px;
+  }
+  @media(max-width:700px){ .form__row{ grid-template-columns:1fr; } }
+  .field{ margin-bottom: 30px; }
+  .field--feature label{ color: var(--copper); font-size:11.5px; }
+  .field--feature textarea{ font-family: var(--serif); font-size: 22px; font-style: italic; font-weight: 300; line-height:1.4; padding: 20px 0 16px; }
+  .field label{
+    display:block;
+    font-family:var(--sans);
+    font-size:10.5px;
+    letter-spacing:.24em;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-weight:500;
+    margin-bottom:12px;
+  }
+  .field input[type=text],
+  .field input[type=email],
+  .field textarea,
+  .field select{
+    width:100%;
+    padding: 14px 0 12px;
+    border:none;
+    border-bottom:1px solid var(--ink);
+    background:transparent;
+    font-family:var(--sans);
+    font-size:15px;
+    color:var(--ink);
+    line-height:1.5;
+    transition: border-color .3s var(--ease);
+    -webkit-appearance:none;
+    border-radius:0;
+  }
+  .field textarea{ resize:vertical; min-height: 110px; }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus{ outline:none; border-bottom-color: var(--copper); }
+  .field .checks{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 24px;
+    margin-top: 6px;
+  }
+  @media(max-width:700px){ .field .checks{ grid-template-columns:1fr; } }
+  .check{
+    display:flex; align-items:center; gap:12px;
+    font-size:14.5px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    padding: 8px 0;
+  }
+  .check input{
+    appearance:none; -webkit-appearance:none;
+    width:16px; height:16px;
+    border:1px solid var(--ink);
+    background:transparent;
+    cursor:pointer;
+    display:grid; place-items:center;
+    flex-shrink:0;
+    border-radius:0;
+  }
+  .check input:checked{ background:var(--copper); border-color:var(--copper); }
+  .check input:checked::after{
+    content:""; width:6px; height:6px; background:#fff;
+  }
+  .radios{ display:flex; flex-direction:column; gap:8px; margin-top:6px; }
+  .radios label{
+    display:flex; align-items:center; gap:12px;
+    font-family:var(--sans);
+    font-size:14.5px;
+    color:var(--ink-soft);
+    letter-spacing:0;
+    text-transform:none;
+    font-weight:400;
+    cursor:pointer;
+    padding: 6px 0;
+    margin:0;
+  }
+  .radios input{
+    appearance:none; -webkit-appearance:none;
+    width:14px; height:14px;
+    border:1px solid var(--ink); border-radius:50%;
+    background:transparent;
+    display:grid; place-items:center;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .radios input:checked{ border-color:var(--copper); }
+  .radios input:checked::after{
+    content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--copper);
+  }
+  .form__submit{ margin-top: 20px; display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+  .form__note{
+    font-family:var(--sans);
+    font-size:11.5px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  /* Confirmation screen — globe overlay */
+  #confirmation-scene{
+    position: fixed; inset: 0; z-index: 1000;
+    background: radial-gradient(circle at 50% 50%, #0F0F0F 0%, #050505 100%);
+    display: none;
+    align-items: center; justify-content: center;
+    flex-direction: column;
+    padding: 40px;
+    opacity: 0;
+    transition: opacity 1.4s var(--ease-lux);
+  }
+  #confirmation-scene.on{ display: flex; opacity: 1; }
+  .globe-wrap{
+    position: relative;
+    width: min(72vh, 620px); height: min(72vh, 620px);
+    max-width: 90vw; max-height: 62vh;
+  }
+  .globe-wrap svg{ width: 100%; height: 100%; overflow: visible; }
+  .globe-grid line, .globe-grid ellipse, .globe-grid circle{
+    fill: none;
+    stroke: rgba(240,199,155,0.14);
+    stroke-width: 0.6;
+  }
+  .globe-outer{
+    stroke: rgba(240,199,155,0.28) !important;
+    stroke-width: 1 !important;
+  }
+  .globe-grid{
+    transform-origin: 310px 310px;
+    animation: globeSpin 60s linear infinite;
+  }
+  @keyframes globeSpin{
+    from{ transform: rotate(0deg); }
+    to{ transform: rotate(360deg); }
+  }
+  .globe-dot{
+    fill: url(#copperGrad);
+    filter: drop-shadow(0 0 6px rgba(240,199,155,0.85));
+    transform-origin: center;
+    transform-box: fill-box;
+    animation: dotBreath 3.8s ease-in-out infinite;
+  }
+  .globe-dot.d2{ animation-delay: -.4s; }
+  .globe-dot.d3{ animation-delay: -.8s; }
+  .globe-dot.d4{ animation-delay: -1.2s; }
+  .globe-dot.d5{ animation-delay: -1.6s; }
+  .globe-dot.d6{ animation-delay: -2.0s; }
+  @keyframes dotBreath{
+    0%,100%{ opacity: 0.55; transform: scale(.85); filter: drop-shadow(0 0 4px rgba(240,199,155,0.5)); }
+    50%{ opacity: 1; transform: scale(1.1); filter: drop-shadow(0 0 12px rgba(240,199,155,1)); }
+  }
+  .conf-heading{
+    font-family: var(--serif); font-weight: 200;
+    font-size: clamp(24px, 2.6vw, 34px);
+    color: #F0C79B;
+    background: var(--copper-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
+    letter-spacing: .01em;
+    margin: 50px 0 14px;
+    font-style: italic;
+  }
+  .conf-note{
+    font-family: var(--sans); font-size: 12px;
+    color: rgba(240,199,155,0.55);
+    letter-spacing: .24em; text-transform: uppercase;
+    text-align: center;
+    max-width: 44ch;
+    line-height: 1.7;
+  }
+  .conf-close{
+    position: absolute; top: 22px; right: 26px;
+    background: transparent; border: 1px solid rgba(240,199,155,0.35);
+    color: rgba(240,199,155,0.8);
+    width: 36px; height: 36px; border-radius: 50%;
+    font-size: 14px; cursor: pointer;
+    transition: background .3s var(--ease-lux), color .3s var(--ease-lux);
+  }
+  .conf-close:hover{ background: var(--copper); color: #0F0F0F; }
+
+  .footer{
+    background: var(--dark);
+    color:#8A8A8A;
+    padding: 60px var(--pad) 40px;
+    font-family:var(--sans);
+    font-size:11.5px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;
+  }
+  .footer__brand{
+    display:flex; flex-direction:column; gap:6px;
+    text-transform: none; letter-spacing: 0;
+  }
+  .footer__brand .fb-title{
+    font-family: var(--sans); font-size:11px; letter-spacing:.32em;
+    text-transform:uppercase; color: var(--dark-ink);
+  }
+  .footer__brand .fb-by{
+    font-family: var(--sans); font-size:10.5px; letter-spacing:.28em;
+    text-transform:uppercase; color:#6A6A6A; font-weight:400;
+  }
+  .footer__brand .fb-house{
+    font-family: var(--sans); font-size:10.5px; letter-spacing:.28em;
+    text-transform:uppercase; color:#6A6A6A;
+  }
+
+  .reveal{ opacity:0; transform: translateY(24px); transition: opacity 1.1s var(--ease), transform 1.1s var(--ease); }
+  .reveal.in{ opacity:1; transform:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .pin-section{ height:auto !important; }
+    .pin-stage{ position: static; height:auto; padding: 60px var(--pad); }
+    .sys-node{ opacity:1 !important; }
+    .sys-line-seg, .sys-branch{ stroke-dashoffset:0 !important; }
+    .draw-path{ stroke-dashoffset:0 !important; }
+    .fade-in{ opacity:1 !important; }
+    .hero__thread{ animation:none; transform: none; }
+    .hero h1 .word span, .hero__stanza .line span,
+    .hero__def, .hero__cta{ animation:none !important; opacity:1 !important; transform:none !important; }
+    .room-line{ stroke-dashoffset:0 !important; }
+    .scene-text{ opacity:1 !important; transform:none !important; }
+    .scene-cap{ opacity:1 !important; }
+    #system-header, .sys-header{ transform:none !important; opacity:1 !important; }
+  }
+
+  /* ---- System: vertical tree (final) ---- */
+  #system .sys-layout{
+    display:grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items:center;
+  }
+  #system .sys-layout .sys-header{
+    margin:0; max-width: 520px;
+    transform:none !important; opacity:1 !important;
+  }
+  #system .sys-v svg{
+    height: min(76vh, 720px); width:auto; max-width:100%;
+    display:block; margin: 0 auto;
+  }
+  .sys-v .sys-line-seg,
+  .sys-v .sys-branch{
+    stroke: url(#sysGrad); stroke-width: 1; fill:none; stroke-linecap: round;
+    stroke-dasharray: 1; stroke-dashoffset: 1;
+  }
+  .sys-v .sys-line-seg{ transition: stroke-dashoffset 1.1s var(--ease-line); }
+  .sys-v .sys-branch{ transition: stroke-dashoffset 1.2s var(--ease-line); }
+  .sys-v .dot{ fill:#F4F4F2; stroke:#C58452; stroke-width:1; }
+  .sys-v .dot.dot--copper{ fill:#C58452; stroke:#C58452; }
+  #system .pin-stage.stage-7 .n6 circle,
+  #system .pin-stage.stage-8 .n6 circle{ filter: drop-shadow(0 0 6px rgba(240,199,155,.9)); }
+
+  /* light travelling through the finished system */
+  .sys-flow{
+    fill:none; stroke:#F0C79B; stroke-width:1.6; stroke-linecap:round;
+    stroke-dasharray: 22 3000; stroke-dashoffset: 22;
+    opacity:0; transition: opacity 1s var(--ease-lux);
+    filter: drop-shadow(0 0 4px rgba(240,199,155,.9));
+  }
+  #system .pin-stage.stage-8 .sys-flow{
+    opacity:1;
+    animation: sysFlow 6s linear 2.4s infinite;
+  }
+  @keyframes sysFlow{
+    0%   { stroke-dashoffset: 22; }
+    75%  { stroke-dashoffset: -820; }
+    100% { stroke-dashoffset: -820; }
+  }
+
+  @media (max-width: 820px){
+    #system .sys-layout{ grid-template-columns: 1fr; gap: 16px; }
+    #system .sys-header h2{ font-size: 32px; }
+    #system .sys-v svg{ height: 58vh; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .sys-v .sys-line-seg, .sys-v .sys-branch{ stroke-dashoffset:0 !important; }
+    .sys-flow{ display:none; }
+  }
+
+  /* ---- Beyond the Lobby: text on top, horizontal story below ---- */
+  .btl2-head{ max-width: 760px; margin: 0 auto 50px; text-align:center; }
+  .btl2-head h2.title{ margin: 0 auto 22px; max-width: 20ch; }
+  .btl2-head .body{ margin: 0 auto; }
+  .btl2{ margin: 0 auto; max-width: 1200px; }
+  .btl2 svg{ width:100%; height:auto; display:block; }
+
+  .b-ln{
+    fill:none; stroke:url(#btlGrad); stroke-width:1; stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray:1; stroke-dashoffset:1;
+  }
+  .b-wisp{ fill:none; stroke:#D6A06D; stroke-width:.8; stroke-linecap:round; opacity:0; }
+  .b-node{ fill:#F4F4F2; stroke:url(#btlGrad); stroke-width:1; opacity:0; }
+  .b-core{ fill:#C58452; opacity:0; }
+  .b-halo{ fill:none; stroke:#D6A06D; stroke-width:.7; opacity:0; transform-box:fill-box; transform-origin:center; }
+  .b-oil{ fill:#D6A06D; opacity:.32; transform-box:fill-box; transform-origin:50% 100%; transform:scaleY(0); }
+  .b-drop{ fill:#C58452; opacity:0; }
+  .b-ripple{ fill:none; stroke:#D6A06D; stroke-width:.7; opacity:0; transform-box:fill-box; transform-origin:center; }
+  .b-lbl{ font-family:"Inter",sans-serif; font-size:11px; letter-spacing:2.8px; fill:#111110; opacity:0; }
+  .b-micro{ font-family:"Inter",sans-serif; font-size:9.5px; letter-spacing:2.6px; fill:#8C8C88; opacity:0; }
+  .b-serif{ font-family:"Cormorant Garamond",serif; font-style:italic; font-weight:300; font-size:26px; fill:#C58452; opacity:0; }
+  .b-flow{
+    fill:none; stroke:#F0C79B; stroke-width:1.6; stroke-linecap:round;
+    stroke-dasharray: 20 3000; stroke-dashoffset: 20; opacity:0;
+    filter: drop-shadow(0 0 4px rgba(240,199,155,.9));
+  }
+  .btl2-formula{ opacity:0; margin-top: 26px; }
+
+  /* sequence — plays when the scene enters view */
+  .btl2.in .b-room   { animation: bDraw 1.6s var(--ease-line) .0s forwards; }
+  .btl2.in .b-floor  { animation: bDraw 1.4s var(--ease-line) .2s forwards; }
+  .btl2.in .l-space  { animation: bFade 1s var(--ease-lux) 1.0s forwards; }
+  .btl2.in .w1       { animation: bWisp 4.6s ease-in-out 1.2s infinite; }
+  .btl2.in .w2       { animation: bWisp 4.6s ease-in-out 2.4s infinite; }
+  .btl2.in .w3       { animation: bWisp 4.6s ease-in-out 3.4s infinite; }
+
+  .btl2.in .b-l1     { animation: bDraw 1.2s var(--ease-line) 1.8s forwards; }
+  .btl2.in .b-node   { animation: bFade .8s var(--ease-lux) 2.8s forwards; }
+  .btl2.in .b-core   { animation: bFade .8s var(--ease-lux) 3.0s forwards; }
+  .btl2.in .l-state  { animation: bFade 1s var(--ease-lux) 2.9s forwards; }
+
+  .btl2.in .b-l2     { animation: bDraw 1.0s var(--ease-line) 3.3s forwards; }
+  .btl2.in .b-bottle { animation: bDraw 1.3s var(--ease-line) 4.1s forwards; }
+  .btl2.in .b-oil    { animation: bRise 1.6s var(--ease-lux) 5.1s forwards; }
+  .btl2.in .b-skin   { animation: bDraw 1.0s var(--ease-line) 4.7s forwards; }
+  .btl2.in .b-drop   { animation: bDrop 3.8s ease-in 5.8s infinite; }
+  .btl2.in .b-ripple { animation: bRipple 3.8s ease-out 5.8s infinite; }
+  .btl2.in .b-card   { animation: bDraw 1.2s var(--ease-line) 5.1s forwards; }
+  .btl2.in .b-card-g { animation: bFloat 5s ease-in-out 6.4s infinite; }
+  .btl2.in .l-ritual { animation: bFade 1s var(--ease-lux) 5.6s forwards; }
+
+  .btl2.in .b-l3     { animation: bDraw 1.0s var(--ease-line) 6.2s forwards; }
+  .btl2.in .b-node-access { animation: bFade .8s var(--ease-lux) 7.0s forwards; }
+  .btl2.in .b-core-access { animation: bFade .8s var(--ease-lux) 7.2s forwards, bGlow 3.6s ease-in-out 8s infinite; }
+  .btl2.in .b-halo   { animation: bHalo 3.8s var(--ease-lux) 7.6s infinite; }
+  .btl2.in .l-access { animation: bFade 1s var(--ease-lux) 7.2s forwards; }
+
+  .btl2.in .b-flow   { animation: bFlowIn .1s linear 8.4s forwards, bFlow 5s linear 8.4s infinite; }
+  .btl2.in .btl2-formula{ animation: bFade 1.2s var(--ease-lux) 7.8s forwards; }
+
+  @keyframes bDraw { to{ stroke-dashoffset:0; } }
+  @keyframes bFade { to{ opacity:1; } }
+  @keyframes bRise { to{ transform:scaleY(1); } }
+  @keyframes bWisp{
+    0%  { opacity:0;   transform: translateY(8px); }
+    30% { opacity:.7; }
+    100%{ opacity:0;   transform: translateY(-34px); }
+  }
+  @keyframes bDrop{
+    0%  { opacity:0; transform: translateY(0); }
+    12% { opacity:1; }
+    70% { opacity:1; transform: translateY(80px); }
+    76% { opacity:0; transform: translateY(82px); }
+    100%{ opacity:0; transform: translateY(82px); }
+  }
+  @keyframes bRipple{
+    0%, 68% { opacity:0;  transform: scale(.3); }
+    74%     { opacity:.7; }
+    100%    { opacity:0;  transform: scale(1.7); }
+  }
+  @keyframes bFloat{
+    0%,100%{ transform: translateY(0); }
+    50%    { transform: translateY(-4px); }
+  }
+  @keyframes bGlow{
+    0%,100%{ filter: drop-shadow(0 0 2px rgba(240,199,155,.45)); }
+    50%    { filter: drop-shadow(0 0 9px rgba(240,199,155,1)); }
+  }
+  @keyframes bHalo{
+    0%  { opacity:0;  transform: scale(1); }
+    20% { opacity:.5; }
+    100%{ opacity:0;  transform: scale(2.3); }
+  }
+  @keyframes bFlowIn{ to{ opacity:1; } }
+  @keyframes bFlow{
+    0%   { stroke-dashoffset: 20; }
+    80%  { stroke-dashoffset: -600; }
+    100% { stroke-dashoffset: -600; }
+  }
+
+  @media (max-width: 820px){
+    .btl2-head{ margin-bottom: 30px; }
+    .b-lbl{ font-size:14px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .b-ln{ stroke-dashoffset:0 !important; }
+    .b-node,.b-core,.b-lbl,.b-micro,.b-serif,.btl2-formula{ opacity:1 !important; }
+    .b-oil{ transform:none !important; }
+    .b-wisp,.b-drop,.b-ripple,.b-halo,.b-flow{ display:none; }
+    .btl2 *{ animation:none !important; }
+  }
+
+  /* Why Now — 5 evidence rows: number + content column */
+  #why-now .proof{ grid-template-columns: 90px 1fr; align-items:start; }
+  #why-now .proof__content{ display:flex; flex-direction:column; align-items:flex-start; }
+  #why-now .proof__body + .proof__body{ margin-top: 10px; }
+  #why-now .proof__src{
+    margin-top: 18px; font-size:10px; letter-spacing:.28em; text-transform:uppercase;
+    color:#E9E4D9; opacity:1; font-weight:300;
+  }
+  #why-now .proof__link{ margin-top: 10px; }
+  @media(max-width:820px){ #why-now .proof{ grid-template-columns:1fr; } }
+
+  /* ---- The Twenty-Two: stars over the whole screen, text typesets on scroll ---- */
+  #selection.stars-scene2{ background: transparent; }
+  #selection .pin-stage{ padding:0; }
+  .sky22{ position:absolute; inset: 0; }
+  .sky-star{
+    position:absolute; border-radius:50%;
+    transform: translate(-50%,-50%);
+    background: radial-gradient(circle at 40% 40%, #F0C79B 0%, #D6A06D 45%, #B47749 80%, #A66A3F 100%);
+    opacity:0;
+    transition: opacity 1.4s var(--ease-lux) var(--in, 0s);
+  }
+  .sky22.in .sky-star{
+    opacity:1;
+    animation: twinkle var(--tw-dur,4s) ease-in-out var(--tw-delay,4s) infinite;
+  }
+  .sky-title{
+    position:relative; z-index:2; margin:0; text-align:center; padding: 0 24px;
+    font-family: var(--serif); font-style: italic; font-weight: 200;
+    font-size: clamp(28px, 3.6vw, 52px); line-height: 1.3; letter-spacing: .01em;
+    color: var(--dark-ink);
+  }
+  .sky-title .tw{
+    display:inline-block; opacity:0; transform: translateY(6px); filter: blur(3px);
+  }
+  .sky-title .tw.cu{
+    background: var(--copper-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    padding-right: .06em;
+  }
+  #selection .pin-stage.stage-2 .sky-title .tw{
+    animation: typeSetIn 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .sky-star{ opacity:1 !important; animation:none !important; }
+    .sky-title .tw{ opacity:1 !important; transform:none !important; filter:none !important; animation:none !important; }
+  }
+
+  /* ---- Twenty-Two: real typing, two lines over the stars ---- */
+  .sky-texts{ position:relative; z-index:2; display:grid; place-items:center; width:100%; }
+  .sky-texts .sky-title{ grid-area: 1 / 1; max-width: 22ch; transition: opacity 1s var(--ease-lux), transform 1s var(--ease-lux); }
+  .sky-texts .t2{ font-size: clamp(26px, 3.2vw, 46px); max-width: 26ch; }
+  .sky-title .cu{
+    background: var(--copper-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    padding-right: .06em;
+  }
+  .sky-title .wd{ white-space: nowrap; }
+  .sky-title .ch{ opacity:0; }
+  @keyframes chIn{ to{ opacity:1; } }
+  /* line 1 types as soon as the stars scene arrives */
+  #selection.in-sky .t1 .ch{ animation: chIn .12s linear forwards; }
+  /* scrolling on: line 1 lifts away, line 2 types */
+  #selection .pin-stage.stage-2 .t1{ opacity:0; transform: translateY(-14px); }
+  #selection .pin-stage.stage-2 .t2 .ch{ animation: chIn .12s linear forwards; }
+  @media (prefers-reduced-motion: reduce){
+    .sky-title .ch{ opacity:1 !important; animation:none !important; }
+    .sky-texts{ display:block; }
+    .sky-texts .sky-title{ margin-bottom: 24px; }
+  }
+
+  /* ---- Twenty-Two: three calm steps, no overlap ---- */
+  .worlds-intro{
+    min-height: 90vh; display:flex; align-items:center; justify-content:center;
+    padding: 120px var(--pad); background: transparent; text-align:center;
+  }
+  .worlds-title{
+    margin:0; max-width: 20ch;
+    font-family: var(--serif); font-style: italic; font-weight: 200;
+    font-size: clamp(32px, 4.4vw, 64px); line-height: 1.2; letter-spacing: .01em;
+    color: #F4F4F2;
+  }
+  .worlds-title em, #selection-narrative h2.title em{
+    font-style: italic; font-weight: 200; padding-right: .06em;
+    background: var(--copper-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  .stars-only{ position: relative; min-height: 100vh; background: transparent; }
+  #selection-narrative h2.title{ color:#FFFFFF; }
+
+  /* ---- 22 worlds: stars behind the line, then the turning globe ---- */
+  .worlds-intro{ position: relative; overflow: hidden; }
+  .worlds-intro .sky22{ position:absolute; inset:0; z-index:0; }
+  .worlds-intro .worlds-title{ position: relative; z-index: 1; }
+
+  .globe-scene{
+    min-height: 100vh; display:flex; align-items:center; justify-content:center;
+    padding: 80px 20px; background: transparent;
+  }
+  .jg-wrap{
+    width: min(74vh, 640px); height: min(74vh, 640px); max-width: 92vw;
+    opacity: 0; transform: scale(.96);
+    transition: opacity 1.8s var(--ease-lux), transform 1.8s var(--ease-lux);
+  }
+  .jg-wrap.in{ opacity: 1; transform: none; }
+  .jg-wrap svg{ width:100%; height:100%; overflow:visible; }
+  .jg-grid line, .jg-grid ellipse, .jg-grid circle{
+    fill:none; stroke: rgba(240,199,155,0.14); stroke-width:.55; stroke-linecap:round;
+  }
+  .jg-grid .jg-outer{ stroke: rgba(240,199,155,0.32); stroke-width: 1; }
+  .jg-grid{ transform-origin: 310px 310px; animation: jgSpin 60s linear infinite; }
+  @keyframes jgSpin{ from{ transform: rotate(0deg); } to{ transform: rotate(360deg); } }
+  .jg-dot{
+    fill: url(#jgCopper);
+    transform-box: fill-box; transform-origin: center;
+    animation: jgBreath var(--dur,4s) ease-in-out var(--dly,0s) infinite;
+  }
+  @keyframes jgBreath{
+    0%,100%{ opacity:.45; transform: scale(.75); filter: drop-shadow(0 0 3px rgba(240,199,155,.4)); }
+    50%    { opacity:1;   transform: scale(1.15); filter: drop-shadow(0 0 12px rgba(240,199,155,1)); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .jg-grid, .jg-dot{ animation:none; }
+    .jg-wrap{ opacity:1; transform:none; }
+  }
+
+  /* "Twenty-two distinct" upright like page 1, "hospitality worlds." italic copper */
+  .worlds-intro .worlds-title{ font-style: normal; font-weight: 300; max-width: 22ch; }
+  .worlds-intro .worlds-title em{ font-style: italic; font-weight: 200; }
+
+  /* stars travelling from the sky onto the globe */
+  .star-flight{ position: fixed; inset: 0; pointer-events: none; z-index: 60; display: none; }
+  .star-flight span{
+    position: absolute; left: 0; top: 0; border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #F0C79B 0%, #D6A06D 45%, #B47749 80%, #A66A3F 100%);
+    box-shadow: 0 0 8px rgba(240,199,155,.75);
+    will-change: transform, width, height;
+  }
+  body.stars-flying .star-flight{ display: block; }
+  body.stars-flying .sky-star,
+  body.stars-flying .jg-dot,
+  body.stars-before-globe .jg-dot{ visibility: hidden; }
+
+  /* one line, page-1 typing */
+  .worlds-intro .worlds-title.worlds-type{
+    max-width:none; white-space:nowrap;
+    font-size: clamp(22px, 3.6vw, 56px);
+  }
+  .worlds-type .tw{
+    display:inline-block; opacity:0; transform: translateY(6px); filter: blur(3px);
+  }
+  .worlds-type.typing .tw{
+    animation: typeSetIn 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  @media (max-width: 640px){
+    .worlds-intro .worlds-title.worlds-type{ white-space: normal; font-size: 30px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .worlds-type .tw{ opacity:1; transform:none; filter:none; animation:none !important; }
+  }
+
+  /* header: menu centred, Request on the right */
+  .hdr{ justify-content: flex-end; }
+  .hdr__nav{ position:absolute; left:50%; transform: translateX(-50%); }
+
+  /* Why Now: former white text now black */
+  .tonal-flow #why-now h2.title{ color:#111110; }
+  #why-now .proof__title{ color:#111110; }
+  #why-now .proof__link{ color:#111110; }
+  #why-now .proof__link:hover{ color:#A66A3F; }
+
+  /* Twenty-two distinct hospitality worlds: same size as "Not one hundred…", stacked vertically */
+  .worlds-intro .worlds-title.worlds-type{
+    white-space: normal; max-width: none;
+    font-size: clamp(38px, 5.6vw, 72px); line-height: 1.12;
+  }
+  .worlds-type .tw{ display: block; }
+  @media (max-width: 640px){
+    .worlds-intro .worlds-title.worlds-type{ font-size: clamp(38px, 5.6vw, 72px); }
+  }
+
+  /* "22 distinct hospitality worlds." — one horizontal line, same size as "Not one hundred…" */
+  .worlds-intro .worlds-title.worlds-type{ white-space: nowrap; }
+  .worlds-type .tw{ display: inline-block; }
+  @media (max-width: 760px){
+    .worlds-intro .worlds-title.worlds-type{ white-space: normal; }
+  }
+  /* "No duplication." always in copper-gold ombre */
+  .selection-lines .sl:nth-child(3){
+    background: var(--copper-grad);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    padding-right: .06em;
+  }
+
+  /* copper italic words: give the italic overhang + descenders room so the gradient fills every letter (e.g. the "g" in guest) */
+  h2.title em, .hero h1 em, .scene-text em, #system .sys-header h2 em,
+  .worlds-title em, #selection-narrative h2.title em{
+    padding: 0 .12em .16em .12em;
+    margin: 0 -.12em -.16em -.12em;
+    -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  }
+
+  /* supporting lines: same as "Jardin du Désert creates the personal layer guests carry beyond the stay." */
+  .btl2-head .body,
+  #system .sys-header p{
+    font-family: var(--sans);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.6;
+    letter-spacing: 0;
+    color: var(--muted);
+    max-width: 42ch;
+  }
+  .btl2-head .body{ margin: 0 auto; }
+  #system .sys-header p{ margin: 0; }
+
+  /* one line each */
+  .btl2-head{ max-width: none; }
+  .btl2-head .ln1{ display:block; white-space: nowrap; }
+  .btl2-head h2.btl2-title{ max-width: none; }
+  .btl2-head .body.btl2-sub{ max-width: none; }
+  @media (max-width: 760px){ .btl2-head .ln1{ white-space: normal; } }
+  .field--feature label .opt{ color: var(--muted); letter-spacing: .18em; }
+
+  /* form: always visible, black text */
+  #reviewForm .field, #reviewForm .form__row, #reviewForm .form__submit{ opacity:1 !important; transform:none !important; }
+  #reviewForm .field label{ color:#111110; }
+  #reviewForm .field--feature label{ color:#111110; }
+  #reviewForm .field label .opt{ color:#111110; opacity:.55; }
+  #reviewForm input, #reviewForm textarea{ color:#111110; border-bottom-color:#111110; }
+  #reviewForm input::placeholder, #reviewForm textarea::placeholder{ color:#111110; opacity:.45; }
+  #review h2.title, #review .form-intro{ color:#111110; }
+
+  /* hero line under the stanza: two lines */
+  .hero__def .hd-line{ display:block; white-space:nowrap; }
+  .hero__def .hd-line + .hd-line{ margin-top: 8px; }
+  .hero__def .hd-line--mobile{ display:none; }
+
+  /* compact form */
+  #review .form-intro{ color:#8C8C88; margin: 0 0 32px; }
+  #reviewForm .form__row{ gap: 24px; margin-bottom: 0; }
+  #reviewForm .field{ margin-bottom: 16px; }
+  #reviewForm .field label{ margin-bottom: 4px; }
+  #reviewForm input[type=text], #reviewForm input[type=email]{ padding: 8px 0 6px; }
+  #reviewForm textarea{ min-height: 0; padding: 8px 0 6px; line-height: 1.45; }
+  #reviewForm .field--feature textarea{ font-size: 18px; padding: 8px 0 6px; }
+  #reviewForm .form__submit{ margin-top: 10px; }
+
+  /* simple form: optional questions look like the other fields */
+  #reviewForm .field--feature label{ font-size:10.5px; letter-spacing:.24em; }
+  #reviewForm .field--feature textarea{
+    font-family: var(--sans); font-style: normal; font-weight: 400;
+    font-size: 15px; line-height: 1.5;
+  }
+  #reviewForm textarea::placeholder{ font-size: 11px; letter-spacing: .04em; }
+
+  #review .form-intro{
+    font-family: var(--sans); font-style: normal; font-weight: 400;
+    font-size: 14px; line-height: 1.6; letter-spacing: 0; color: var(--muted);
+  }
+
+  /* ~40% less space between "22 distinct hospitality worlds" and the globe */
+  .worlds-intro{ min-height: 64vh; padding-top: 100px; padding-bottom: 40px; }
+  .globe-scene{ min-height: auto; padding-top: 20px; padding-bottom: 8px; }
+
+  /* "No duplication." — bright copper-gold, not brown */
+  .selection-lines .sl:nth-child(3){
+    background: linear-gradient(100deg, #D6A06D 0%, #F0C79B 40%, #E6B98A 65%, #C58452 100%) !important;
+    -webkit-background-clip: text !important; background-clip: text !important;
+    -webkit-text-fill-color: transparent !important; color: transparent !important;
+  }
+  /* line under "22 distinct luxury hospitality worlds." */
+  .worlds-intro{ flex-direction: column; }
+  .worlds-sub{
+    position: relative; z-index: 1;
+    margin: 26px 0 0; font-family: var(--sans); font-size: 14px; line-height: 1.6;
+    color: #FFFFFF; opacity: 0; transform: translateY(8px);
+    transition: opacity 1.2s var(--ease-lux) 2.4s, transform 1.2s var(--ease-lux) 2.4s;
+  }
+  .worlds-intro:has(.worlds-type.typing) .worlds-sub{ opacity: 1; transform: none; }
+
+  /* the line now sits between the stars and the globe */
+  .globe-scene{ flex-direction: column; }
+  .globe-scene .worlds-sub{
+    margin: 0 0 36px; text-align:center; padding: 0 24px;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 1.2s var(--ease-lux), transform 1.2s var(--ease-lux);
+  }
+  .globe-scene .worlds-sub.in{ opacity: 1; transform: none; }
+
+  #selection-narrative .narr-sub{
+    font-family: var(--sans); font-style: normal; font-weight: 400;
+    font-size: 14px; line-height: 1.6; letter-spacing: 0; max-width: 42ch;
+  }
+
+  /* headline sits in the optical centre */
+  .worlds-intro{ padding-top: 40px; padding-bottom: 110px; }
+
+  /* stars already drift slowly downward while the headline is on screen */
+  .sky22.in .sky-star{
+    animation:
+      twinkle var(--tw-dur,4s) ease-in-out var(--tw-delay,4s) infinite,
+      starDrift 14s cubic-bezier(0.22, 1, 0.36, 1) 1.5s forwards;
+  }
+  @keyframes starDrift{ from{ translate: 0 0; } to{ translate: 0 26px; } }
+
+  /* ~50% less space between the headline and "Selected across…" */
+  .worlds-intro{ min-height: 58vh; padding-top: 40px; padding-bottom: 20px; }
+  .globe-scene{ padding-top: 0; }
+  #selection-narrative{ padding-top: 36px; }
+
+  @media (max-width: 640px){
+    .hero__def .hd-line--desktop{ display:none; }
+    .hero__def .hd-line--mobile{ display:block; white-space:nowrap; }
+    .hero__def .hd-line--mobile + .hd-line--mobile{ margin-top: 8px; }
+    .globe-scene{ min-height: auto; padding-bottom: 0; margin-bottom: -34px; }
+    #selection-narrative{ padding-top: 12px; }
+    #review .form-intro .fi-desktop{ display:none; }
+    #review .form-intro .fi-mobile{ display:block; }
+  }
+
+  @media (min-width: 641px){
+    #review .form-intro .fi-mobile{ display:none; }
+  }
+
+  #selection-narrative .narr-sub{ max-width: none; }
+  #selection-narrative .narr-sub .ln1{ display:block; white-space:nowrap; }
+  @media (max-width: 480px){ #selection-narrative .narr-sub .ln1{ white-space: normal; } }
+
+  /* "Selected across…" back under the headline, regular spacing */
+  .worlds-intro .worlds-sub{ margin: 22px 0 0; text-align:center; padding: 0 24px; }
+  .worlds-sub.in{ opacity: 1; transform: none; }
+
+  /* FAQ items 6–8 enter like the rest */
+  #faq.in details:nth-child(6) > summary{ opacity:1; transform:none; transition-delay:.95s; }
+  #faq.in details:nth-child(7) > summary{ opacity:1; transform:none; transition-delay:1.1s; }
+  #faq.in details:nth-child(8) > summary{ opacity:1; transform:none; transition-delay:1.25s; }
+  #faq details:nth-child(6)::before{ transition-delay:.85s; }
+  #faq details:nth-child(7)::before{ transition-delay:1s; }
+  #faq details:nth-child(8)::before{ transition-delay:1.15s; }
+
+  /* form: checkboxes + radios in normal case, black */
+  #reviewForm .field .check, #reviewForm .field .radios label{
+    text-transform:none; letter-spacing:0; font-size:14px; font-weight:400;
+    color:#111110; margin:0; padding:5px 0;
+    display:flex; align-items:center; gap:12px; cursor:pointer;
+  }
+  #reviewForm .checks{ gap: 4px 24px; margin-top: 4px; }
+  #reviewForm .radios{ gap: 2px; margin-top: 4px; }
+  #reviewForm .check input, #reviewForm .radios input{ border-color:#111110; }
+  #reviewForm .form__submit .btn{ margin-top: 6px; }
+
+  /* radios drawn as squares, same as the checkboxes */
+  #reviewForm .radios input{
+    border-radius: 0; width:16px; height:16px;
+  }
+  #reviewForm .radios input:checked{ background: var(--copper); border-color: var(--copper); }
+  #reviewForm .radios input:checked::after{ width:6px; height:6px; border-radius:0; background:#fff; }
+
+  #reviewForm .btn--submit{
+    display:inline-flex; align-items:center; gap:14px;
+    padding: 15px 34px; border:1px solid var(--copper); color: var(--copper);
+    background: transparent; opacity:1; visibility:visible;
+  }
+  #reviewForm .btn--submit:hover{ background: var(--copper-grad); color:#fff; border-color: transparent; }
+
+  /* hero: a little more air before the definition + button */
+  .hero__def{ margin-top: 64px; }
+
+  /* evidence 02: one tone lighter */
+  #why-now .proof:nth-child(2) .proof__body, #why-now .proof:nth-child(2) .proof__src{ color:#FFFFFF; }
+
+  /* evidence 01: white text + source */
+  #why-now .proof:nth-child(1) .proof__body, #why-now .proof:nth-child(1) .proof__src{ color:#FFFFFF; }
+
+  /* "22 distinct luxury hospitality worlds." — weight 400 */
+  .worlds-intro .worlds-title.worlds-type,
+  .worlds-intro .worlds-title.worlds-type em{ font-weight: 500; }
+
+  /* Twenty-two in copper-gold; the rest of the line in white */
+  .worlds-type .cu22{
+    background: linear-gradient(100deg, #D6A06D 0%, #F0C79B 40%, #E6B98A 65%, #C58452 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    padding: 0 .06em .12em; margin: 0 -.06em -.12em;
+  }
+  .worlds-intro .worlds-title.worlds-type em{
+    background: none !important;
+    -webkit-text-fill-color: #FFFFFF !important; color: #FFFFFF !important;
+  }
+  /* "Held exclusively." in white */
+  .selection-lines .sl:nth-child(3){
+    background: none !important;
+    -webkit-text-fill-color: #FFFFFF !important; color: #FFFFFF !important;
+  }
+
+  /* globe lines + circle in white; copper points unchanged */
+  .jg-grid line, .jg-grid ellipse, .jg-grid circle{ stroke: rgba(255,255,255,0.22); }
+  .jg-grid .jg-outer{ stroke: rgba(255,255,255,0.55); }
+
+  /* author line fully black */
+  .author-claim, .author-claim em{
+    background:none !important; -webkit-text-fill-color:#111110 !important; color:#111110 !important;
+  }
+
+  /* soft, short ombre instead of hard section edges */
+  #review{ background: linear-gradient(to bottom, #F4F4F2 0px, #EAEAE7 140px) !important; }
+  .tonal-flow{ z-index: 0; }
+  .tonal-flow::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:140px;
+    background: linear-gradient(to bottom, #F4F4F2 0%, rgba(244,244,242,0) 100%);
+    z-index:-1; pointer-events:none;
+  }
+
+  /* author claim: same size as the author role line */
+  .author-claim{ font-size: clamp(22px, 2.6vw, 32px); line-height: 1.4; }
+
+  /* form heading: classic upright Cormorant, no wavy italic */
+  #review h2.title{ font-family: var(--serif); font-style: normal; font-weight: 400; letter-spacing: .005em; }
+  #review h2.title em{ font-style: normal; font-weight: 400; }
+
+  /* header Contact: no box, text with the animated copper-gold line underneath */
+  .hdr__cta{
+    border: none !important; background: transparent !important;
+    padding: 6px 0 8px !important; position: relative;
+    color: var(--ink);
+  }
+  .hdr__cta::after{
+    content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+    background: linear-gradient(90deg,
+      rgba(166,106,63,0.35) 0%, #F0C79B 30%, #D6A06D 50%, #F0C79B 70%, rgba(166,106,63,0.35) 100%);
+    background-size: 220% 100%; background-position: 100% 50%;
+    animation: shimmerLine 3.2s var(--ease-lux) infinite;
+  }
+  .hdr__cta:hover{ background: transparent !important; color: #A66A3F !important; }
+  .hdr.on-dark .hdr__cta{ color: #E9E4D9; }
+  .hdr.on-dark .hdr__cta:hover{ color: #F0C79B !important; }
+
+  /* Discover the System + Submit Interest: no box, animated copper-gold line underneath */
+  .hero__cta .btn, #reviewForm .btn--submit{
+    border: none !important; background: transparent !important;
+    padding: 6px 0 9px !important; position: relative;
+    color: var(--ink) !important; -webkit-text-fill-color: currentColor !important;
+  }
+  .hero__cta .btn::after, #reviewForm .btn--submit::after{
+    content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+    background: linear-gradient(90deg,
+      rgba(166,106,63,0.35) 0%, #F0C79B 30%, #D6A06D 50%, #F0C79B 70%, rgba(166,106,63,0.35) 100%);
+    background-size: 220% 100%; background-position: 100% 50%;
+    animation: shimmerLine 3.2s var(--ease-lux) infinite;
+  }
+  .hero__cta .btn:hover, #reviewForm .btn--submit:hover{
+    background: transparent !important; color: #A66A3F !important;
+  }
+
+  /* sentence case for Contact / Discover the system / Submit interest */
+  .hdr__cta, .hero__cta .btn, #reviewForm .btn--submit{
+    text-transform: none !important; letter-spacing: .06em !important; font-size: 13px !important;
+  }
+
+  /* animated logo, top-left, same height and line as "Contact" */
+  .hdr{ justify-content: space-between !important; }
+  .hdr__logo{ display:flex; align-items:center; height:32px; }
+  .hdr__logo img{ height:32px; width:auto; display:block; }
+  .hdr__cta{ height:32px; display:inline-flex; align-items:center; }
+
+  /* ---- menu: three copper-gold ombre lines ---- */
+  .hdr__burger{
+    position:absolute; left:50%; top:50%; transform: translate(-50%,-50%);
+    width:30px; height:32px; padding:0; border:0; background:transparent; cursor:pointer;
+    display:flex; flex-direction:column; justify-content:center; gap:7px;
+  }
+  .hdr__burger span{
+    display:block; width:100%; height:1px;
+    background: linear-gradient(90deg,
+      rgba(166,106,63,0.35) 0%, #F0C79B 30%, #D6A06D 50%, #F0C79B 70%, rgba(166,106,63,0.35) 100%);
+    background-size: 220% 100%; background-position: 100% 50%;
+    animation: shimmerLine 3.2s var(--ease-lux) infinite;
+    transition: transform .5s var(--ease-lux), opacity .3s var(--ease-lux);
+    transform-origin: center;
+  }
+  .hdr__burger span:nth-child(2){ animation-delay: .25s; }
+  .hdr__burger span:nth-child(3){ animation-delay: .5s; }
+  body.menu-open .hdr__burger span:nth-child(1){ transform: translateY(8px) rotate(45deg); }
+  body.menu-open .hdr__burger span:nth-child(2){ opacity: 0; }
+  body.menu-open .hdr__burger span:nth-child(3){ transform: translateY(-8px) rotate(-45deg); }
+
+  .site-menu{
+    position: fixed; inset: 0; z-index: 95;
+    background: rgba(244,244,242,0.94);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; visibility:hidden;
+    transition: opacity .6s var(--ease-lux), visibility 0s linear .6s;
+  }
+  body.menu-open .site-menu{ opacity:1; visibility:visible; transition: opacity .6s var(--ease-lux), visibility 0s; }
+  .site-menu__nav{ display:flex; flex-direction:column; align-items:center; gap: 22px; }
+  .site-menu__nav a{
+    position:relative; padding-bottom: 6px;
+    font-family: var(--serif); font-weight: 300; font-size: clamp(30px, 4vw, 48px);
+    color: #111110; letter-spacing: .01em;
+    opacity:0; transform: translateY(10px);
+    transition: opacity .7s var(--ease-lux), transform .7s var(--ease-lux), color .3s var(--ease-lux);
+  }
+  body.menu-open .site-menu__nav a{ opacity:1; transform:none; }
+  body.menu-open .site-menu__nav a:nth-child(1){ transition-delay: .10s; }
+  body.menu-open .site-menu__nav a:nth-child(2){ transition-delay: .18s; }
+  body.menu-open .site-menu__nav a:nth-child(3){ transition-delay: .26s; }
+  body.menu-open .site-menu__nav a:nth-child(4){ transition-delay: .34s; }
+  body.menu-open .site-menu__nav a:nth-child(5){ transition-delay: .42s; }
+  .site-menu__nav a::after{
+    content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+    background: linear-gradient(90deg, rgba(166,106,63,0.35), #F0C79B 30%, #D6A06D 50%, #F0C79B 70%, rgba(166,106,63,0.35));
+    transform: scaleX(0); transform-origin: left center;
+    transition: transform .6s var(--ease-line);
+  }
+  .site-menu__nav a:hover{ color:#A66A3F; }
+  .site-menu__nav a:hover::after{ transform: scaleX(1); }
+  body.menu-open{ overflow:hidden; }
+  body.menu-open .hdr{ background: transparent !important; border-bottom-color: transparent !important; }
+  body.menu-open .hdr.on-dark .hdr__cta{ color: var(--ink); }
+
+  /* header: menu left · logo centre · Contact right */
+  .hdr__burger{ position: static !important; transform: none !important; }
+  .hdr__logo{ position:absolute; left:50%; top:50%; transform: translate(-50%,-50%); }
+
+  /* Why Now: cactus logo instead of 01–05, same size as the numbers */
+  .proof__logo{ background:none !important; -webkit-text-fill-color: initial !important; padding:0 !important; line-height:0; }
+  .proof__logo img{ height:40px; width:auto; display:block; }
+
+  /* ---- confirmation after "Submit interest" (same design as state-review-submitted.html) ---- */
+  .submitted{
+    position:fixed; inset:0; z-index:300;
+    background: radial-gradient(circle at 50% 45%, #14120F 0%, #060606 65%, #000 100%);
+    display:flex; align-items:center; justify-content:center; padding: 40px 20px;
+    opacity:0; visibility:hidden;
+    transition: opacity 1.4s var(--ease-lux), visibility 0s linear 1.4s;
+  }
+  .submitted.on{ opacity:1; visibility:visible; transition: opacity 1.4s var(--ease-lux), visibility 0s; }
+  body.sub-open{ overflow:hidden; }
+  .sub-logo{ position:absolute; top:22px; left:28px; height:40px; display:flex; align-items:center; }
+  .sub-logo img{ height:40px; width:auto; display:block; }
+  .sub-close{
+    position:absolute; top:22px; right:28px; width:40px; height:40px;
+    background:transparent; border:0; cursor:pointer;
+    font-family: var(--sans); font-size:26px; font-weight:200; line-height:1; color:#FFFFFF;
+    transition: transform .3s var(--ease-lux), opacity .3s var(--ease-lux);
+  }
+  .sub-close:hover{ transform: rotate(90deg); opacity:.7; }
+  .sub-stage{ display:flex; flex-direction:column; align-items:center; gap:40px; width:100%; }
+  .sub-globe{ width:min(74vh,640px); height:min(74vh,640px); max-width:92vw; }
+  .sub-globe svg{ width:100%; height:100%; overflow:visible; }
+  .sub-grid line, .sub-grid ellipse, .sub-grid circle{ fill:none; stroke: rgba(255,255,255,0.22); stroke-width:.55; stroke-linecap:round; }
+  .sub-grid .sub-outer{ stroke: rgba(255,255,255,0.55); stroke-width:1; }
+  .sub-grid{ transform-origin:310px 310px; animation: jgSpin 60s linear infinite; }
+  .sub-dot{
+    fill:url(#subCopper); transform-box:fill-box; transform-origin:center;
+    animation: jgBreath var(--dur,4s) ease-in-out var(--dly,0s) infinite;
+  }
+  .sub-heading{
+    margin:0; text-align:center; color:#FFFFFF;
+    font-family: var(--serif); font-style: italic; font-weight: 300;
+    font-size: clamp(24px, 2.6vw, 34px); letter-spacing:.01em;
+  }
+  .sub-note{
+    margin:0; text-align:center; color:#FFFFFF;
+    font-family: var(--sans); font-size:11.5px; font-weight:300; letter-spacing:.28em; text-transform:uppercase; line-height:1.8;
+  }
+  .sub-note span{ display:block; }
+  .submitted.on .sub-heading{ animation: subRise 1.6s var(--ease-lux) .6s both; }
+  .submitted.on .sub-note{ animation: subRise 1.6s var(--ease-lux) 1s both; }
+  @keyframes subRise{ from{ opacity:0; transform: translateY(14px); } to{ opacity:1; transform:none; } }
+
+  /* message if required fields are empty */
+  .form__error{ margin: 14px 0 0; font-family: var(--sans); font-size: 12px; color:#A66A3F; letter-spacing:.04em; display:none; }
+  .form__error.on{ display:block; }
+
+  /* confirmation: same soft grey ombre as the globe section */
+  .submitted{ background: linear-gradient(to bottom, #3A3A38 0%, #2C2C2A 40%, #1F1F1E 78%, #1A1A19 100%) !important; }
+
+  /* System builds by itself (no scrolling needed) */
+  #system.sys-auto{ position:relative; min-height:100vh; }
+  #system.sys-auto .pin-stage{ position:relative; }
+
+  /* Contact: no underline */
+  .hdr__cta::after{ display:none !important; content:none !important; }
+
+  /* when the stars land on the globe, each point becomes the cactus logo */
+  .jg-wrap{ position: relative; }
+  .jg-logos{ position:absolute; inset:0; pointer-events:none; }
+  .jg-logo{
+    position:absolute; height:5.4%; width:auto;
+    transform: translate(-50%,-62%) scale(.4); opacity:0;
+    transition: opacity .9s var(--ease-lux), transform .9s var(--ease-lux);
+    filter: drop-shadow(0 0 4px rgba(240,199,155,.35));
+  }
+  .jg-wrap.landed .jg-logo{ opacity:1; transform: translate(-50%,-62%) scale(1); }
+  .jg-wrap.landed .jg-dot{ visibility:hidden; }
+
+  /* logos vary like the stars: size, brightness, gentle breathing */
+  .jg-wrap.landed .jg-logo{
+    opacity: var(--op, 1);
+    animation: logoBreath var(--dur, 4s) ease-in-out var(--dly, 0s) infinite;
+  }
+  @keyframes logoBreath{
+    0%,100%{ scale: .9;  filter: brightness(.85) drop-shadow(0 0 2px rgba(240,199,155,.25)); }
+    50%    { scale: 1.08; filter: brightness(1.2) drop-shadow(0 0 7px rgba(240,199,155,.75)); }
+  }
+
+  /* confirmation globe: the finished cactus logos in place of the points */
+  .sub-globe{ position: relative; }
+  .sub-logos{ position:absolute; inset:0; pointer-events:none; }
+  .sub-cactus{
+    position:absolute; width:auto;
+    transform: translate(-50%,-62%);
+    opacity: var(--op, 1);
+    animation: logoBreath var(--dur, 4s) ease-in-out var(--dly, 0s) infinite;
+  }
+  .sub-dot{ visibility:hidden; }
+
+  /* keep the points: each cactus now grows up out of its point */
+  .jg-wrap.landed .jg-dot{ visibility: visible !important; }
+  .sub-dot{ visibility: visible !important; }
+  .jg-logo{ transform: translate(-50%,-50%) scale(.4) !important; transform-origin: 50% 50%; }
+  .jg-wrap.landed .jg-logo{ transform: translate(-50%,-50%) scale(1) !important; }
+  .sub-cactus{ transform: translate(-50%,-50%) !important; transform-origin: 50% 50%; }
+  body.stars-flying .jg-dot, body.stars-before-globe .jg-dot{ visibility: hidden !important; }
+
+  /* 11 cacti · 11 points */
+  .jg-logo.is-off, .sub-cactus.is-off{ display:none !important; }
+  .jg-wrap.landed .jg-dot.as-cactus{ visibility:hidden !important; }
+  .sub-globe .sub-dot.as-cactus{ visibility:hidden !important; }
+
+  /* globes: points only (no cactus logos) */
+  .jg-logos, .sub-logos{ display:none !important; }
+  .jg-wrap.landed .jg-dot.as-cactus, .sub-globe .sub-dot.as-cactus{ visibility: visible !important; }
+
+  /* stars + globe points: bright gold-copper ombre, no brown */
+  .sky-star, .star-flight span{
+    background: radial-gradient(circle at 40% 40%, #FFF0DA 0%, #F0C79B 40%, #E6B98A 75%, #D6A06D 100%) !important;
+  }
+  .star-flight span{ box-shadow: 0 0 8px rgba(240,199,155,.8); }
+
+  /* soft light halo around every star / globe point */
+  .sky-star{ box-shadow: 0 0 6px 1px rgba(255,236,210,.55), 0 0 16px 4px rgba(240,199,155,.35); }
+  .star-flight span{ box-shadow: 0 0 6px 1px rgba(255,236,210,.6), 0 0 18px 5px rgba(240,199,155,.4) !important; }
+  @keyframes jgBreath{
+    0%,100%{ opacity:.55; transform: scale(.8);
+             filter: drop-shadow(0 0 3px rgba(255,236,210,.6)) drop-shadow(0 0 9px rgba(240,199,155,.45)); }
+    50%    { opacity:1;   transform: scale(1.15);
+             filter: drop-shadow(0 0 5px rgba(255,236,210,.9)) drop-shadow(0 0 18px rgba(240,199,155,.8)); }
+  }
+  @keyframes twinkle{
+    0%,100%{ opacity:.45; filter: blur(.3px) drop-shadow(0 0 4px rgba(255,236,210,.55)); }
+    50%    { opacity:1;   filter: blur(.2px) drop-shadow(0 0 12px rgba(240,199,155,1)); }
+  }
+
+  /* evidence links in sentence case: "View article" */
+  .proof__link{ text-transform: none !important; letter-spacing: .04em !important; font-size: 13px !important; }
+
+  /* Why Now: one even tone behind all evidence (01 matches 02), soft ombre in and out */
+  .tonal-flow > #why-now{
+    background: linear-gradient(to bottom,
+      rgba(106,106,103,0) 0px,
+      rgba(106,106,103,.55) 140px,
+      #6A6A67 320px,
+      #6A6A67 calc(100% - 320px),
+      rgba(106,106,103,0) 100%) !important;
+  }
+
+  /* 01 + 02 text and source: same warm soft white as 03 */
+  #why-now .proof:nth-child(1) .proof__body, #why-now .proof:nth-child(1) .proof__src,
+  #why-now .proof:nth-child(2) .proof__body, #why-now .proof:nth-child(2) .proof__src{ color:#E9E4D9 !important; }
+
+  /* confirmation text in the warm soft white used in Evidence */
+  .sub-heading, .sub-note{ color:#E9E4D9 !important; -webkit-text-fill-color:#E9E4D9 !important; }
+
+  /* smaller globe on the confirmation screen */
+  .sub-globe{ width: min(54vh, 460px) !important; height: min(54vh, 460px) !important; max-width: 80vw; }
+
+  .sub-heading{ font-style: normal !important; }
+
+  /* confirmation globe: no grid — a thin circle with a few points, two of them brighter */
+  .sub-grid ellipse, .sub-grid line{ display:none !important; }
+  .sub-grid .sub-outer{ stroke: rgba(255,255,255,.45) !important; stroke-width: .8 !important; }
+  .sub-dot:not(.keep){ display:none !important; }
+  .sub-dot.keep.soft{ opacity:.55; }
+
+  .sub-note{ text-transform:none !important; letter-spacing:.02em !important; font-weight:300 !important; font-size:15px !important; }
+
+  /* confirmation: no globe, no corner logo — logo above a compact text block */
+  .sub-globe, .sub-logo{ display:none !important; }
+  .sub-stage{ gap: 0 !important; }
+  .sub-center-logo{ height:40px; width:auto; display:block; margin: 0 0 26px; }
+  .sub-heading{ margin: 0 0 14px !important; }
+
+  /* confirmation background: black */
+  .submitted{ background: #000000 !important; }
+
+  /* confirmation: same light background as the form, dark text */
+  .submitted{ background: #EAEAE7 !important; }
+  .sub-heading{ color:#111110 !important; -webkit-text-fill-color:#111110 !important; }
+  .sub-note{ color:#333333 !important; -webkit-text-fill-color:#333333 !important; }
+  .sub-close{ color:#111110 !important; }
+
+  .sub-heading{ font-style: italic !important; }
+  .worlds-sub{ color:#E9E4D9 !important; }
+
+  /* "distinct Luxury Hospitality Worlds." in warm soft white */
+  .worlds-intro .worlds-title.worlds-type{ color:#E9E4D9 !important; }
+  .worlds-intro .worlds-title.worlds-type em{ color:#E9E4D9 !important; -webkit-text-fill-color:#E9E4D9 !important; }
+
+  .worlds-type .cu22{ background:none !important; color:#E9E4D9 !important; -webkit-text-fill-color:#E9E4D9 !important; }
+
+  /* "We architect the complete system around it." — all italic */
+  .author-claim, .author-claim em{ font-style: italic !important; }
+
+  /* Why Now heading */
+  .tonal-flow #why-now h2.title.why-title{ color:#E9E4D9 !important; -webkit-text-fill-color:#E9E4D9 !important; }
+
+
+  /* header keeps its starting look while scrolling (no colour change) */
+  .hdr, .hdr.scrolled, .hdr.on-dark{
+    background: #F4F4F2 !important;
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+    border-bottom-color: transparent !important;
+  }
+  .hdr.on-dark .hdr__cta{ color: var(--ink) !important; }
+  .hdr.on-dark .hdr__cta:hover{ color: #A66A3F !important; }
+
+  /* STATE · SCENT · RITUAL · CONTINUATION — smaller, one line */
+  .author-formula{
+    flex-wrap: nowrap !important; white-space: nowrap;
+    font-size: 9.5px !important; letter-spacing: .28em !important;
+    gap: 12px !important; padding: 16px 22px !important; max-width: none !important;
+  }
+  .author-formula .dot{ width:3px; height:3px; }
+
+  /* "A scent fills the space. / A ritual stays with the guest." — same size as "The relationship should not." */
+  .btl2-head h2.btl2-title{ font-size: clamp(32px, 4.6vw, 60px) !important; line-height: 1.12; letter-spacing: -.01em; }
+
+  /* author: wordmark logo instead of typed name */
+  .author-name--logo{ background:none !important; -webkit-text-fill-color: initial !important; line-height:0; }
+  .author-name--logo img{ height: clamp(44px, 5.4vw, 76px); width:auto; max-width: 90vw; display:inline-block; }
+
+  /* animated cactus growing out of the "t" of Désert */
+  .wm-wrap{ position: relative; display: inline-block; line-height: 0; }
+  .wm-cactus{
+    position: absolute; left: 91.5%; bottom: 70.5%;
+    height: 95%; width: auto;
+    transform: translateX(-50%) scale(.6); transform-origin: 50% 100%;
+    opacity: 0; pointer-events: none;
+    transition: opacity .9s var(--ease-lux), transform 1.1s var(--ease-lux);
+  }
+  .wm-cactus.on{ opacity: 1; transform: translateX(-50%) scale(1); }
+
+  /* cactus stands in the hook of the final "t" (as in the monogram) */
+  .wm-cactus{ left: 95.8% !important; bottom: 7% !important; height: 46% !important;
+              transform: translateX(-52%) scale(.6) !important; }
+  .wm-cactus.on{ transform: translateX(-52%) scale(1) !important; }
+
+  /* Evidence: cactus sits on the first line of each title */
+  .proof__title--cactus{ display:flex; align-items:flex-start; gap: .45em; }
+  .proof__cactus{ height: 1em; width:auto; flex-shrink:0; margin-top: .06em; }
+
+  /* Evidence titles: max two lines (fixed breaks, no extra wrapping) */
+  #why-now .proof__title{ max-width: none !important; }
+  .proof__title--cactus > span{ white-space: nowrap; }
+  @media (max-width: 640px){ .proof__title--cactus > span{ white-space: normal; } }
+
+  /* cactus as tall as the two title lines */
+  .proof__title--cactus{ align-items: center !important; }
+  .proof__cactus{ height: 2.2em !important; margin-top: 0 !important; }
+
+  /* cactus 30% smaller, centred between the two lines */
+  .proof__title--cactus{ align-items: center !important; }
+  .proof__cactus{ height: 1.23em !important; margin: 0 !important; align-self: center !important; }
+
+  /* titles keep their two fixed lines */
+  .proof__title--lines > span{ white-space: nowrap; }
+  @media (max-width: 640px){ .proof__title--lines > span{ white-space: normal; } }
+  .proof__mobile-title{ display:none; }
+  @media (max-width: 640px){
+    .proof__desktop-title{ display:none; }
+    .proof__mobile-title{ display:inline; }
+  }
+
+  /* desktop: cactus ~50% closer to its text (mobile unchanged) */
+  @media (min-width: 821px){
+    #why-now .proof__logo{ justify-self: end; margin-right: 12px; }
+  }
+
+  /* desktop: the cactus starts the first line of each title; line 2 aligns under the cactus */
+  .proof__cactus-inline{ display:none; }
+  @media (min-width: 821px){
+    #why-now .proof__logo{ display:none !important; }
+    #why-now .proof__content{ grid-column: 2; }
+    .proof__cactus-inline{
+      display:inline-block; height: .95em; width:auto;
+      vertical-align: -0.1em; margin-right: .32em;
+    }
+  }
+
+  /* narrow windows / mobile: same inline cactus as on desktop */
+  @media (max-width: 820px){
+    #why-now .proof__logo{ display:none !important; }
+    #why-now .proof__content{ grid-column: 1; }
+    .proof__cactus-inline{
+      display:inline-block; height: .95em; width:auto;
+      vertical-align: -0.1em; margin-right: .32em;
+    }
+  }
+
+  /* Evidence links: on hover the text turns copper-gold ombre (no brown) */
+  #why-now .proof__link:hover{
+    background: linear-gradient(100deg, #D6A06D 0%, #F0C79B 40%, #E6B98A 65%, #C58452 100%) !important;
+    -webkit-background-clip: text !important; background-clip: text !important;
+    -webkit-text-fill-color: transparent !important; color: transparent !important;
+  }
+
+  /* ---- copper-gold ombre everywhere instead of brown ---- */
+  /* hover: Discover the system · Contact · Submit interest */
+  .hero .hero__cta .btn:hover,
+  .hdr .hdr__cta:hover, .hdr.on-dark .hdr__cta:hover,
+  #review #reviewForm .btn--submit:hover{
+    background: linear-gradient(100deg, #D6A06D 0%, #F0C79B 40%, #E6B98A 65%, #C58452 100%) !important;
+    -webkit-background-clip: text !important; background-clip: text !important;
+    -webkit-text-fill-color: transparent !important; color: transparent !important;
+  }
+  /* + / × icons (FAQ + Selection Principles) always in ombre */
+  .faq summary .plus, .principles summary .plus{
+    display:inline-block;
+    background: linear-gradient(100deg, #D6A06D 0%, #F0C79B 40%, #E6B98A 65%, #C58452 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  /* FAQ question + "Our Selection Principles" turn ombre on hover */
+  .faq summary:hover, .principles summary:hover span:first-child{
+    background: linear-gradient(100deg, #D6A06D 0%, #F0C79B 40%, #E6B98A 65%, #C58452 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  /* form: focus line + ticked boxes in ombre */
+  #reviewForm input:focus, #reviewForm textarea:focus{
+    border-bottom: 1px solid transparent !important;
+    border-image: linear-gradient(90deg, #D6A06D, #F0C79B 45%, #C58452) 1 !important;
+  }
+  #reviewForm .check input:checked, #reviewForm .radios input:checked{
+    background: linear-gradient(100deg, #D6A06D 0%, #F0C79B 40%, #E6B98A 65%, #C58452 100%) !important; border-color: #E6B98A !important;
+  }
+  #reviewForm .form__error{ color:#C58452; }
+
+  /* confirmation: text first (centred), animated cactus after it */
+  .sub-center-logo{ margin: 22px 0 0 !important; }
+  .sub-heading{ margin: 0 0 14px !important; }
+
+  /* small grey "Est." lines under the cactus */
+  .sub-est, .est-lines{
+    margin: 14px 0 0; text-align:center;
+    font-family: var(--sans, "Inter", Arial, sans-serif); font-size: 11px; font-weight: 300;
+    letter-spacing: .06em; line-height: 1.7; color: #8C8C88 !important; -webkit-text-fill-color:#8C8C88 !important;
+    text-transform: none;
+  }
+  .sub-est span, .est-lines span{ display:block; }
+
+  /* Est. lines pinned to the bottom of the screen, ~28px from the edge */
+  .sub-est, .est-lines{
+    position: absolute; left: 0; right: 0; bottom: 28px; margin: 0 !important;
+  }
+
+  /* "Please complete the required fields." in copper-gold ombre */
+  #reviewForm .form__error.on{ display: inline-block; }
+  #reviewForm .form__error{
+    background: linear-gradient(100deg, #D6A06D 0%, #F0C79B 40%, #E6B98A 65%, #C58452 100%) !important;
+    -webkit-background-clip: text !important; background-clip: text !important;
+    -webkit-text-fill-color: transparent !important; color: transparent !important;
+  }
+</style>
+</head>
+<body>
+
+<header class="hdr" id="hdr">
+  <a href="#top" class="hdr__logo" aria-label="Jardin du Désert"><img src="./assets/jdd-logo.webp" alt="Jardin du Désert"></a>
+  <button class="hdr__burger" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="siteMenu">
+    <span></span><span></span><span></span>
+  </button>
+  <a href="#review" class="hdr__cta">Contact</a>
+</header>
+
+<div class="site-menu" id="siteMenu" aria-hidden="true">
+  <nav class="site-menu__nav">
+    <a href="#system">System</a>
+    <a href="#value">Value</a>
+    <a href="#why-now">Evidence</a>
+    <a href="#selection">Selection</a>
+    <a href="#questions">Questions</a>
+  </nav>
+</div>
+
+<section id="top" class="hero">
+  <div class="hero__grid">
+    <h1>
+      <span class="tw" style="animation-delay:.35s">Turn</span>
+      <span class="tw" style="animation-delay:.53s">the</span>
+      <span class="tw" style="animation-delay:.71s"><em>State</em></span>
+      <span class="tw" style="animation-delay:1.21s">of</span>
+      <span class="tw" style="animation-delay:1.39s">your</span>
+      <span class="tw" style="animation-delay:1.57s">property</span>
+      <span class="tw" style="animation-delay:2.13s">into</span>
+      <span class="tw" style="animation-delay:2.31s">something</span>
+      <span class="tw" style="animation-delay:2.49s">guests</span>
+      <span class="tw" style="animation-delay:2.67s">can</span>
+      <span class="tw" style="animation-delay:2.85s">carry.</span>
+    </h1>
+    <p class="hero__stanza">
+      <span class="line"><span style="animation-delay:3.6s;">From space.</span></span>
+      <span class="line"><span style="animation-delay:4.0s;">To skin.</span></span>
+      <span class="line"><span style="animation-delay:4.4s;">Beyond the stay.</span></span>
+    </p>
+    <div class="hero__def">
+      <span class="hd-line hd-line--desktop">A State-Based System for Luxury Hospitality</span>
+      <span class="hd-line hd-line--desktop">by Jardin du Désert</span>
+      <span class="hd-line hd-line--mobile">A state-based system</span>
+      <span class="hd-line hd-line--mobile">for luxury hospitality</span>
+      <span class="hd-line hd-line--mobile">By Jardin du Désert</span>
+    </div>
+    <div class="hero__cta">
+      <a href="#missing" class="btn btn--copper">Discover the system</a>
+    </div>
+  </div>
+</section>
+
+<section id="missing" class="pin-section h3" data-scene data-steps="3">
+  <div class="pin-stage">
+    <div class="pin-stage__inner room-scene">
+      <div class="room-scene__svg">
+        <svg viewBox="0 0 640 420" xmlns="http://www.w3.org/2000/svg">
+          <!-- contemporary hotel lobby: double-height glass volume, slim columns, cantilevered roof, glass entrance -->
+          <g fill="none" stroke="#111110" stroke-width=".9" stroke-linecap="square" stroke-linejoin="miter">
+            <!-- cantilevered roof slab -->
+            <path d="M 24 64 L 440 64 M 24 72 L 440 72" opacity=".85"/>
+            <!-- building shell: left wall, floor, right wall down to the entrance -->
+            <path d="M 40 72 L 40 380 L 400 380 M 400 72 L 400 196" opacity=".85"/>
+            <!-- entrance canopy + glass doors (the scent line passes through here) -->
+            <path d="M 400 196 L 478 196 M 478 196 L 478 204" opacity=".85"/>
+            <path d="M 400 204 L 400 380 M 424 204 L 424 380" opacity=".25"/>
+            <!-- ground continuing outside -->
+            <path d="M 400 380 L 620 380" opacity=".35"/>
+          </g>
+          <g fill="none" stroke="#111110" stroke-width=".7" stroke-linecap="square" opacity=".32">
+            <!-- full-height glass facade grid -->
+            <path d="M 100 72 L 100 176 M 160 72 L 160 176 M 220 72 L 220 176 M 280 72 L 280 176 M 340 72 L 340 176"/>
+            <!-- two slim columns in the open lobby -->
+            <path d="M 160 188 L 160 380 M 280 188 L 280 380"/>
+            <!-- mezzanine with glass balustrade -->
+            <path d="M 40 176 L 400 176 M 40 188 L 400 188"/>
+          </g>
+          <g fill="none" stroke="#111110" stroke-width=".8" stroke-linecap="round" opacity=".55">
+            <!-- linear pendant light -->
+            <path d="M 190 72 L 190 128 M 310 72 L 310 128 M 176 128 L 324 128"/>
+            <!-- reception: a single floating stone slab -->
+            <path d="M 214 336 L 330 336 M 226 336 L 226 380 M 318 336 L 318 380"/>
+          </g>
+          <!-- copper line: starts inside room, walks to door, then passes through -->
+          <path class="room-line"
+                d="M 90 340 C 160 340 220 320 260 300 C 320 270 360 240 400 240 C 460 240 500 240 600 240"/>
+          <!-- endpoint dot beyond the door -->
+          <circle cx="600" cy="240" r="4" fill="#C58452"/>
+        </svg>
+      </div>
+      <div class="room-text">
+        <h2 class="scene-text s1">Most hotel scent<br>ends in the <em>lobby</em>.</h2>
+        <h2 class="scene-text s2">The relationship<br>should <em>not</em>.</h2>
+        <p class="scene-cap">Jardin du Désert creates the personal layer guests carry beyond the stay.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="system" class="sys-auto">
+  <div class="pin-stage">
+    <div class="pin-stage__inner sys-layout">
+      <div class="sys-header" id="system-header">
+        <h2>One State. Six connected <em>layers</em>.</h2>
+        <p>From the property's identity to a private guest relationship that continues after checkout.</p>
+      </div>
+
+      <div class="diagram sys-v">
+        <svg viewBox="0 0 600 800" xmlns="http://www.w3.org/2000/svg" style="overflow:visible" aria-label="Property, State, Scent, Intention, Ritual and Private Access connected by one line, branching into Personal Continuation, Property Events and Community">
+          <defs>
+            <linearGradient id="sysGrad" gradientUnits="userSpaceOnUse" x1="0" y1="40" x2="0" y2="780">
+              <stop offset="0%"   stop-color="#A66A3F"/>
+              <stop offset="28%"  stop-color="#C58452"/>
+              <stop offset="50%"  stop-color="#D6A06D"/>
+              <stop offset="68%"  stop-color="#E6B98A"/>
+              <stop offset="88%"  stop-color="#B47749"/>
+              <stop offset="100%" stop-color="#A66A3F"/>
+            </linearGradient>
+          </defs>
+
+          <!-- the one line: each layer connects to the next -->
+          <path class="sys-line-seg seg1" pathLength="1" d="M 80 50  L 80 150"/>
+          <path class="sys-line-seg seg2" pathLength="1" d="M 80 150 L 80 250"/>
+          <path class="sys-line-seg seg3" pathLength="1" d="M 80 250 L 80 350"/>
+          <path class="sys-line-seg seg4" pathLength="1" d="M 80 350 L 80 450"/>
+          <path class="sys-line-seg seg5" pathLength="1" d="M 80 450 L 80 550"/>
+
+          <!-- the tree: Private Access branches into three -->
+          <path class="sys-branch br1" pathLength="1" d="M 80 550 C 80 610 150 640 260 640"/>
+          <path class="sys-branch br2" pathLength="1" d="M 80 550 C 80 640 150 700 260 700"/>
+          <path class="sys-branch br3" pathLength="1" d="M 80 550 C 80 680 150 760 260 760"/>
+
+          <!-- light flowing through the finished system -->
+          <path class="sys-flow" d="M 80 50 L 80 550 C 80 610 150 640 260 640"/>
+          <path class="sys-flow" d="M 80 50 L 80 550 C 80 640 150 700 260 700"/>
+          <path class="sys-flow" d="M 80 50 L 80 550 C 80 680 150 760 260 760"/>
+
+          <!-- layers -->
+          <g class="sys-node n1"><circle class="dot" cx="80" cy="50"  r="6"/></g>
+          <g class="sys-node n2"><circle class="dot" cx="80" cy="150" r="6"/></g>
+          <g class="sys-node n3"><circle class="dot" cx="80" cy="250" r="6"/></g>
+          <g class="sys-node n4"><circle class="dot" cx="80" cy="350" r="6"/></g>
+          <g class="sys-node n5"><circle class="dot" cx="80" cy="450" r="6"/></g>
+          <g class="sys-node n6"><circle class="dot dot--copper" cx="80" cy="550" r="8"/></g>
+          <g class="sys-node b1"><circle class="dot" cx="260" cy="640" r="4"/></g>
+          <g class="sys-node b2"><circle class="dot" cx="260" cy="700" r="4"/></g>
+          <g class="sys-node b3"><circle class="dot" cx="260" cy="760" r="4"/></g>
+
+          <text class="sys-node n1" x="44" y="54"  text-anchor="end" font-family="Inter, sans-serif" font-size="10" letter-spacing="2.5" fill="#8C8C88">01</text>
+          <text class="sys-node n2" x="44" y="154" text-anchor="end" font-family="Inter, sans-serif" font-size="10" letter-spacing="2.5" fill="#8C8C88">02</text>
+          <text class="sys-node n3" x="44" y="254" text-anchor="end" font-family="Inter, sans-serif" font-size="10" letter-spacing="2.5" fill="#8C8C88">03</text>
+          <text class="sys-node n4" x="44" y="354" text-anchor="end" font-family="Inter, sans-serif" font-size="10" letter-spacing="2.5" fill="#8C8C88">04</text>
+          <text class="sys-node n5" x="44" y="454" text-anchor="end" font-family="Inter, sans-serif" font-size="10" letter-spacing="2.5" fill="#8C8C88">05</text>
+          <text class="sys-node n6" x="44" y="554" text-anchor="end" font-family="Inter, sans-serif" font-size="10" letter-spacing="2.5" fill="#8C8C88">06</text>
+
+          <text class="sys-node n1" x="112" y="58"  font-family="Cormorant Garamond, serif" font-style="italic" font-weight="300" font-size="28" fill="#111110">Property</text>
+          <text class="sys-node n2" x="112" y="158" font-family="Cormorant Garamond, serif" font-style="italic" font-weight="300" font-size="28" fill="#111110">State</text>
+          <text class="sys-node n3" x="112" y="258" font-family="Cormorant Garamond, serif" font-style="italic" font-weight="300" font-size="28" fill="#111110">Scent</text>
+          <text class="sys-node n4" x="112" y="358" font-family="Cormorant Garamond, serif" font-style="italic" font-weight="300" font-size="28" fill="#111110">Intention</text>
+          <text class="sys-node n5" x="112" y="458" font-family="Cormorant Garamond, serif" font-style="italic" font-weight="300" font-size="28" fill="#111110">Ritual</text>
+          <text class="sys-node n6" x="112" y="559" font-family="Cormorant Garamond, serif" font-style="italic" font-weight="300" font-size="32" fill="#C58452">Private Access</text>
+
+          <text class="sys-node b1" x="282" y="644" font-family="Inter, sans-serif" font-size="11" letter-spacing="2.8" fill="#111110">PERSONAL CONTINUATION</text>
+          <text class="sys-node b2" x="282" y="704" font-family="Inter, sans-serif" font-size="11" letter-spacing="2.8" fill="#111110">PROPERTY EVENTS</text>
+          <text class="sys-node b3" x="282" y="764" font-family="Inter, sans-serif" font-size="11" letter-spacing="2.8" fill="#111110">COMMUNITY</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="beyond" class="section reveal">
+  <div class="container">
+    <div class="btl2-head">
+      <h2 class="title btl2-title"><span class="ln1">A scent fills the space.</span><span class="ln1">A ritual stays with the <em>guest</em>.</span></h2>
+      <p class="body btl2-sub"><span class="ln1">Jardin du Désert translates the property's State from space to skin —</span><span class="ln1">and into a private relationship beyond checkout.</span></p>
+    </div>
+
+    <div class="diagram btl2" id="diag-btl">
+      <svg viewBox="0 0 1200 380" xmlns="http://www.w3.org/2000/svg" style="overflow:visible" aria-label="Shared space, connected by one line to the property's State, a personal ritual of oil, skin and intention card, and private access">
+        <defs>
+          <linearGradient id="btlGrad" gradientUnits="userSpaceOnUse" x1="60" y1="0" x2="1140" y2="0">
+              <stop offset="0%"   stop-color="#A66A3F"/>
+              <stop offset="28%"  stop-color="#C58452"/>
+              <stop offset="50%"  stop-color="#D6A06D"/>
+              <stop offset="68%"  stop-color="#E6B98A"/>
+              <stop offset="88%"  stop-color="#B47749"/>
+              <stop offset="100%" stop-color="#A66A3F"/>
+            </linearGradient>
+        </defs>
+
+        <!-- 1 · SHARED SPACE -->
+        <path class="b-ln b-room" pathLength="1" d="M 90 300 L 90 150 Q 180 92 270 150 L 270 300"/>
+        <path class="b-ln b-floor" pathLength="1" d="M 60 300 L 300 300"/>
+        <path class="b-wisp w1" d="M 150 272 C 142 258 158 246 150 232 C 142 220 156 210 150 198"/>
+        <path class="b-wisp w2" d="M 180 276 C 172 262 188 250 180 236 C 172 224 186 214 180 202"/>
+        <path class="b-wisp w3" d="M 210 272 C 202 258 218 246 210 232 C 202 220 216 210 210 198"/>
+        <text class="b-lbl l-space" x="180" y="342" text-anchor="middle">SHARED SPACE</text>
+
+        <!-- line: space → State -->
+        <path class="b-ln b-l1" pathLength="1" d="M 270 230 L 504 230"/>
+
+        <!-- 2 · PROPERTY STATE -->
+        <circle class="b-node" cx="520" cy="230" r="16"/>
+        <circle class="b-core" cx="520" cy="230" r="4"/>
+        <text class="b-serif l-state" x="520" y="192" text-anchor="middle">Property State</text>
+        <text class="b-micro l-state" x="520" y="274" text-anchor="middle">TRANSLATED THROUGH</text>
+
+        <!-- line: State → the bottle -->
+        <path class="b-ln b-l2" pathLength="1" d="M 536 230 L 700 230"/>
+
+        <!-- 3 · PERSONAL RITUAL: oil, skin, intention card -->
+        <rect class="b-oil" x="702" y="250" width="36" height="48"/>
+        <path class="b-ln b-bottle" pathLength="1"
+              d="M 700 180 L 700 290 Q 700 300 710 300 L 730 300 Q 740 300 740 290 L 740 180 Z
+                 M 712 180 L 712 162 L 728 162 L 728 180
+                 M 708 162 L 708 142 L 732 142 L 732 162 Z"/>
+        <path class="b-ln b-skin" pathLength="1" d="M 770 292 Q 810 262 850 292"/>
+        <circle class="b-drop" cx="810" cy="196" r="3"/>
+        <ellipse class="b-ripple" cx="810" cy="278" rx="14" ry="4"/>
+        <g class="b-card-g">
+          <path class="b-ln b-card" pathLength="1"
+                d="M 872 192 L 952 192 L 952 268 L 872 268 Z M 886 216 L 938 216 M 886 234 L 924 234"/>
+        </g>
+        <text class="b-lbl l-ritual" x="826" y="342" text-anchor="middle">PERSONAL RITUAL</text>
+
+        <!-- line: ritual → private access -->
+        <path class="b-ln b-l3" pathLength="1" d="M 952 230 L 1094 230"/>
+
+        <!-- 4 · PRIVATE ACCESS -->
+        <circle class="b-halo" cx="1110" cy="230" r="16"/>
+        <circle class="b-node b-node-access" cx="1110" cy="230" r="16"/>
+        <circle class="b-core b-core-access" cx="1110" cy="230" r="4"/>
+        <text class="b-lbl l-access" x="1110" y="342" text-anchor="middle">PRIVATE ACCESS</text>
+
+        <!-- light travelling through the finished line -->
+        <path class="b-flow" d="M 270 230 L 700 230 M 952 230 L 1094 230"/>
+      </svg>
+      <p class="btl-caption btl2-formula">Space <span class="sep">→</span> Skin <span class="sep">→</span> Private Access</p>
+    </div>
+  </div>
+</section>
+
+<section id="author" class="section reveal">
+  <div class="container container--narrow" style="text-align:center;">
+    <p class="author-lede">The system is <span class="au-verb">authored by</span></p>
+    <p class="author-name author-name--logo"><span class="wm-wrap"><img class="wm-img" src="./assets/jdd-wordmark-crop.png" alt="Jardin du Désert"><img class="wm-cactus" id="wmCactus" alt=""></span></p>
+    <p class="author-sub">A Private Intellectual Fragrance House working through scent, ritual, intention and sensory architecture.</p>
+    <h3 class="author-role">We define the State, translate it into scent and ritual, and hold its continuation beyond the stay.</h3>
+    <p class="author-claim">We architect the <em>complete system</em> around it.</p>
+    <div class="author-formula">
+      <span>STATE</span><span class="dot"></span><span>SCENT</span><span class="dot"></span><span>RITUAL</span><span class="dot"></span><span>CONTINUATION</span>
+    </div>
+  </div>
+</section>
+
+<div class="tonal-flow" id="tonalFlow">
+<section id="value" class="section reveal">
+  <div class="container">
+    <h2 class="title">What remains after <em>checkout</em>?</h2>
+
+    <div class="value-grid value-grid--4 value-grid--glass">
+      <div class="value">
+        <div class="value__num">01</div>
+        <h4 class="value__title">Recognizable Position</h4>
+        <p class="value__body">A State guests, teams and press can name.</p>
+      </div>
+      <div class="value">
+        <div class="value__num">02</div>
+        <h4 class="value__title">Personal In-Room Ritual</h4>
+        <p class="value__body">A private experience designed for the individual guest.</p>
+      </div>
+      <div class="value">
+        <div class="value__num">03</div>
+        <h4 class="value__title">Retail Continuation</h4>
+        <p class="value__body">A portable ritual guests can carry and personally repeat.</p>
+      </div>
+      <div class="value">
+        <div class="value__num">04</div>
+        <h4 class="value__title">Private Guest Relationship</h4>
+        <p class="value__body">Access to future rituals, property events and community.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="why-now" class="section section--dark reveal" data-scene data-steps="4">
+  <div class="container">
+    <h2 class="title why-title">What will define luxury hospitality by 2030?</h2>
+
+    <div class="proofs proofs--glass">
+      <div class="proof">
+        <div class="proof__num proof__logo"><img data-logo alt="" width="27" height="40"></div>
+        <div class="proof__content">
+          <h3 class="proof__title proof__title--lines"><span><img class="proof__cactus-inline" data-logo alt="">Luxury is becoming<br>emotional.</span></h3>
+          <p class="proof__body">Emotional connection and identity are increasingly shaping luxury desirability.</p>
+          <div class="proof__src">McKinsey &amp; Company — State of Luxury · 2026</div>
+          <a class="proof__link" href="https://www.mckinsey.com/industries/retail/our-insights/state-of-luxury" target="_blank" rel="noopener">View report <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="proof">
+        <div class="proof__num proof__logo"><img data-logo alt="" width="27" height="40"></div>
+        <div class="proof__content">
+          <h3 class="proof__title proof__title--lines"><span><img class="proof__cactus-inline" data-logo alt="">Luxury travel is becoming<br>more personal.</span></h3>
+          <p class="proof__body">Travelers increasingly seek experiences tailored to what they value, from privacy and longer stays to the details of their time at a property.</p>
+          <div class="proof__src">Deloitte — The Future of Luxury Travel</div>
+          <a class="proof__link" href="https://www.deloitte.com/in/en/Industries/consumer/perspectives/future-of-luxury-travel.html" target="_blank" rel="noopener">View article <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="proof">
+        <div class="proof__num proof__logo"><img data-logo alt="" width="27" height="40"></div>
+        <div class="proof__content">
+          <h3 class="proof__title proof__title--lines"><span><img class="proof__cactus-inline" data-logo alt="">Scent gives memory<br>emotional intensity.</span></h3>
+          <p class="proof__body">Odor-evoked autobiographical memories can be more emotional and evocative than memories triggered visually or auditorily.</p>
+          <div class="proof__src">Herz — Olfactory Memory Study</div>
+          <a class="proof__link" href="https://pubmed.ncbi.nlm.nih.gov/15047596/" target="_blank" rel="noopener">View study <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="proof">
+        <div class="proof__num proof__logo"><img data-logo alt="" width="27" height="40"></div>
+        <div class="proof__content">
+          <h3 class="proof__title proof__title--lines"><span><img class="proof__cactus-inline" data-logo alt=""><span class="proof__desktop-title">Belonging strengthens the<br>guest–brand relationship.</span><span class="proof__mobile-title">Belonging strengths<br>the guest- brand<br>relationship.</span></span></h3>
+          <p class="proof__body">Research into luxury hotel membership programs links a member’s sense of collective identity with commitment to the hotel brand, resistance to switching and word of mouth.</p>
+          <div class="proof__src">Cornell Hospitality Quarterly 2022</div>
+          <a class="proof__link" href="https://journals.sagepub.com/doi/10.1177/19389655211017449" target="_blank" rel="noopener">View study <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+      <div class="proof">
+        <div class="proof__num proof__logo"><img data-logo alt="" width="27" height="40"></div>
+        <div class="proof__content">
+          <h3 class="proof__title proof__title--lines"><span><img class="proof__cactus-inline" data-logo alt="">Travel begins with an<br>emotional purpose.</span></h3>
+          <p class="proof__body">The destination is no longer the only starting point. Travelers increasingly begin with a desired emotional outcome — to rest, reconnect or experience something meaningful.</p>
+          <div class="proof__src">Hilton — 2026 Trends Report</div>
+          <a class="proof__link" href="https://stories.hilton.com/releases/2026-trends-release" target="_blank" rel="noopener">View report <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="selection" class="worlds-intro">
+  <div class="sky22" id="sky22" aria-hidden="true">
+    <span class="sky-star" style="left:18%;top:7%;width:4.1px;height:4.1px;--in:0.00s;--tw-dur:3.7s;--tw-delay:4.1s"></span>
+    <span class="sky-star" style="left:64%;top:5%;width:4.2px;height:4.2px;--in:0.16s;--tw-dur:3.8s;--tw-delay:4.4s"></span>
+    <span class="sky-star" style="left:86%;top:12%;width:3.6px;height:3.6px;--in:0.32s;--tw-dur:4.1s;--tw-delay:6.7s"></span>
+    <span class="sky-star" style="left:38%;top:15%;width:2.8px;height:2.8px;--in:0.48s;--tw-dur:5.3s;--tw-delay:5.0s"></span>
+    <span class="sky-star" style="left:9%;top:24%;width:3.5px;height:3.5px;--in:0.64s;--tw-dur:5.3s;--tw-delay:6.1s"></span>
+    <span class="sky-star" style="left:55%;top:22%;width:4.1px;height:4.1px;--in:0.80s;--tw-dur:4.8s;--tw-delay:4.1s"></span>
+    <span class="sky-star" style="left:78%;top:29%;width:4.0px;height:4.0px;--in:0.96s;--tw-dur:4.6s;--tw-delay:4.9s"></span>
+    <span class="sky-star" style="left:28%;top:33%;width:2.7px;height:2.7px;--in:1.12s;--tw-dur:5.1s;--tw-delay:5.7s"></span>
+    <span class="sky-star" style="left:91%;top:40%;width:4.1px;height:4.1px;--in:1.28s;--tw-dur:4.9s;--tw-delay:6.9s"></span>
+    <span class="sky-star" style="left:46%;top:38%;width:3.4px;height:3.4px;--in:1.44s;--tw-dur:4.8s;--tw-delay:5.8s"></span>
+    <span class="sky-star" style="left:14%;top:46%;width:2.9px;height:2.9px;--in:1.60s;--tw-dur:5.3s;--tw-delay:4.9s"></span>
+    <span class="sky-star" style="left:70%;top:47%;width:3.8px;height:3.8px;--in:1.76s;--tw-dur:5.3s;--tw-delay:6.0s"></span>
+    <span class="sky-star" style="left:33%;top:55%;width:2.7px;height:2.7px;--in:1.92s;--tw-dur:5.1s;--tw-delay:6.0s"></span>
+    <span class="sky-star" style="left:58%;top:58%;width:2.7px;height:2.7px;--in:2.08s;--tw-dur:3.5s;--tw-delay:5.6s"></span>
+    <span class="sky-star" style="left:86%;top:63%;width:2.5px;height:2.5px;--in:2.24s;--tw-dur:5.3s;--tw-delay:5.5s"></span>
+    <span class="sky-star" style="left:8%;top:67%;width:3.3px;height:3.3px;--in:2.40s;--tw-dur:4.2s;--tw-delay:6.0s"></span>
+    <span class="sky-star" style="left:44%;top:72%;width:4.0px;height:4.0px;--in:2.56s;--tw-dur:4.0s;--tw-delay:5.1s"></span>
+    <span class="sky-star" style="left:74%;top:76%;width:3.4px;height:3.4px;--in:2.72s;--tw-dur:4.0s;--tw-delay:5.8s"></span>
+    <span class="sky-star" style="left:22%;top:82%;width:3.4px;height:3.4px;--in:2.88s;--tw-dur:4.3s;--tw-delay:6.0s"></span>
+    <span class="sky-star" style="left:60%;top:86%;width:3.4px;height:3.4px;--in:3.04s;--tw-dur:3.6s;--tw-delay:7.0s"></span>
+    <span class="sky-star" style="left:90%;top:90%;width:3.0px;height:3.0px;--in:3.20s;--tw-dur:4.3s;--tw-delay:5.2s"></span>
+    <span class="sky-star" style="left:36%;top:94%;width:4.1px;height:4.1px;--in:3.36s;--tw-dur:5.3s;--tw-delay:5.5s"></span>
+  </div>
+  <h2 class="worlds-title worlds-type" id="worldsTitle"><span class="tw" style="animation-delay:.35s"><span class="cu22">Twenty-two</span></span> <span class="tw" style="animation-delay:.53s">distinct</span><br><span class="tw" style="animation-delay:1.03s"><em>Luxury</em></span> <span class="tw" style="animation-delay:1.21s"><em>Hospitality</em></span> <span class="tw" style="animation-delay:1.39s"><em>Worlds.</em></span></h2>
+  <p class="worlds-sub" id="worldsSub">Selected across independent properties and hospitality groups.</p>
+</section>
+
+<section id="globe-scene" class="globe-scene" aria-label="A slowly turning globe with 22 copper points of light">
+  <div class="jg-wrap" id="jgWrap">
+    <svg viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="jgCopper" cx="35%" cy="35%">
+          <stop offset="0%" stop-color="#FFF0DA"/>
+          <stop offset="40%" stop-color="#F0C79B"/>
+          <stop offset="75%" stop-color="#E6B98A"/>
+          <stop offset="100%" stop-color="#D6A06D"/>
+        </radialGradient>
+      </defs>
+      <g class="jg-grid">
+          <circle class="jg-outer" cx="310" cy="310" r="260"/>
+          <ellipse cx="310" cy="310" rx="260" ry="55"/>
+          <ellipse cx="310" cy="310" rx="260" ry="115"/>
+          <ellipse cx="310" cy="310" rx="260" ry="175"/>
+          <ellipse cx="310" cy="310" rx="260" ry="225"/>
+          <ellipse cx="310" cy="310" rx="55"  ry="260"/>
+          <ellipse cx="310" cy="310" rx="115" ry="260"/>
+          <ellipse cx="310" cy="310" rx="175" ry="260"/>
+          <ellipse cx="310" cy="310" rx="225" ry="260"/>
+          <line x1="310" y1="50"  x2="310" y2="570"/>
+          <line x1="50"  y1="310" x2="570" y2="310"/>
+        </g>
+        <circle class="jg-dot" cx="180" cy="180" r="3.5" style="--dur:4.2s;--dly:.1s"/>
+        <circle class="jg-dot" cx="440" cy="150" r="3"   style="--dur:5.0s;--dly:.4s"/>
+        <circle class="jg-dot" cx="500" cy="270" r="3.5" style="--dur:3.6s;--dly:.8s"/>
+        <circle class="jg-dot" cx="380" cy="120" r="2.8" style="--dur:4.6s;--dly:1.2s"/>
+        <circle class="jg-dot" cx="145" cy="260" r="3.2" style="--dur:5.4s;--dly:.3s"/>
+        <circle class="jg-dot" cx="220" cy="420" r="3.5" style="--dur:4.0s;--dly:1.6s"/>
+        <circle class="jg-dot" cx="410" cy="440" r="3.2" style="--dur:3.8s;--dly:2.0s"/>
+        <circle class="jg-dot" cx="330" cy="200" r="3"   style="--dur:4.4s;--dly:.5s"/>
+        <circle class="jg-dot" cx="255" cy="150" r="2.8" style="--dur:5.1s;--dly:2.4s"/>
+        <circle class="jg-dot" cx="480" cy="380" r="3.5" style="--dur:3.5s;--dly:1.8s"/>
+        <circle class="jg-dot" cx="130" cy="360" r="3"   style="--dur:4.8s;--dly:.7s"/>
+        <circle class="jg-dot" cx="290" cy="470" r="3.5" style="--dur:4.2s;--dly:2.6s"/>
+        <circle class="jg-dot" cx="380" cy="330" r="4"   style="--dur:3.4s;--dly:.9s"/>
+        <circle class="jg-dot" cx="200" cy="300" r="2.8" style="--dur:5.2s;--dly:2.2s"/>
+        <circle class="jg-dot" cx="470" cy="200" r="3.5" style="--dur:4.5s;--dly:1.0s"/>
+        <circle class="jg-dot" cx="320" cy="380" r="3"   style="--dur:3.7s;--dly:3.0s"/>
+        <circle class="jg-dot" cx="360" cy="490" r="3.5" style="--dur:4.9s;--dly:1.4s"/>
+        <circle class="jg-dot" cx="250" cy="240" r="3"   style="--dur:4.3s;--dly:2.8s"/>
+        <circle class="jg-dot" cx="415" cy="250" r="3.5" style="--dur:5.3s;--dly:.6s"/>
+        <circle class="jg-dot" cx="170" cy="440" r="2.8" style="--dur:3.9s;--dly:1.7s"/>
+        <circle class="jg-dot" cx="470" cy="470" r="3"   style="--dur:4.6s;--dly:2.5s"/>
+        <circle class="jg-dot" cx="285" cy="325" r="4.5" style="--dur:4.0s;--dly:1.1s"/>
+    </svg>
+  </div>
+</section>
+
+<section id="selection-narrative" class="section section--dark reveal">
+  <div class="container">
+    <div class="narrative-block">
+      <h2 class="title title--typeset" data-typeset style="max-width:22ch;">Not one hundred beautiful properties. <em>22 worlds</em> with something real to hold.</h2>
+      <p class="body narr-sub"><span class="ln1">Each must express a recognizable State</span><span class="ln1">through its style, programs, events and values.</span></p>
+      <details class="principles">
+        <summary><span>Our Selection Principles</span> <span class="plus">+</span></summary>
+        <ul class="criteria">
+          <li>A distinct identity beyond visual luxury.</li>
+          <li>A State already felt throughout the guest experience.</li>
+          <li>Leadership ready to develop it as a long-term layer.</li>
+          <li>A commitment to protect its singularity.</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</section>
+
+</div><!-- /.tonal-flow -->
+
+<section id="questions" class="section reveal">
+  <div class="container">
+    <h2 class="title">Questions, answered <em>directly</em>.</h2>
+
+    <div class="faq" id="faq">
+      <details>
+        <summary>Is this a scent partnership or something more? <span class="plus">+</span></summary>
+        <p class="faq__body">This is not an ambient scenting partnership. Guests experience your property through five senses: sight, sound, touch, taste and scent. We use scent’s close connection to emotion and memory to physically anchor your State through a personal ritual.</p>
+      </details>
+      <details>
+        <summary>What if the property already has a signature scent? <span class="plus">+</span></summary>
+        <p class="faq__body">Your existing scent remains. We can draw on its recognizable notes to create a personal oil. The product belongs in your property’s retail, under your control.</p>
+      </details>
+      <details>
+        <summary>How is a State defined? <span class="plus">+</span></summary>
+        <p class="faq__body">Every property already communicates a State. We discuss what yours stands for, how you want guests to feel, and what you want them to remember. Together, we define it.</p>
+      </details>
+      <details>
+        <summary>What does the system require from our team? <span class="plus">+</span></summary>
+        <p class="faq__body">Minimal. The scent is placed in-room. The ritual is a short, trainable moment. The private guest layer is operated by Jardin du Désert on your behalf.</p>
+      </details>
+      <details>
+        <summary>How does the guest relationship continue after checkout? <span class="plus">+</span></summary>
+        <p class="faq__body">Your code opens the guest’s private Space. They can revisit their intention, receive reminders, practice rituals, and see events and a community connected to your property.</p>
+      </details>
+      <details>
+        <summary>How does the in-room ritual work? <span class="plus">+</span></summary>
+        <p class="faq__body">A scented ceramic stone beneath a glass cloche introduces the State without opening the bottle. The guest writes an intention on the complimentary infused card and keeps it with its private access code. The sealed perfume oil follows the minibar model: if opened, it is charged to the room.</p>
+      </details>
+      <details>
+        <summary>How does the scent move from space to skin? <span class="plus">+</span></summary>
+        <p class="faq__body">Through a 6 ml alcohol-free perfume oil applied directly to the skin—not dispersed through a shared space. It can be worn alone or layered with any fragrance.</p>
+      </details>
+      <details>
+        <summary>How is guest engagement measured? <span class="plus">+</span></summary>
+        <p class="faq__body">The property tracks cards taken and perfume oils purchased. We track code activations, continued platform use and event interest. Property recall and repeat stays are evaluated over time.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section id="review" class="section reveal">
+  <div class="container container--narrow">
+    <h2 class="title">What should guests remember <em>feeling</em>?</h2>
+    <p class="body form-intro"><span class="fi-desktop">Express your interest in becoming one of the Twenty-Two.</span><span class="fi-mobile">Express your interest in becoming one<br>of the Twenty-Two.</span></p>
+
+    <form class="form" id="reviewForm" novalidate>
+      <div class="form__row">
+        <div class="field">
+          <label>Hospitality Group / Property Name</label>
+          <input type="text" name="property" required />
+        </div>
+        <div class="field">
+          <label>Your Name</label>
+          <input type="text" name="name" required />
+        </div>
+      </div>
+      <div class="form__row">
+        <div class="field">
+          <label>Title / Role</label>
+          <input type="text" name="title" required />
+        </div>
+        <div class="field">
+          <label>Work Email</label>
+          <input type="email" name="email" required />
+        </div>
+      </div>
+      <div class="field">
+        <label>Property Location(s)</label>
+        <input type="text" name="location" required />
+      </div>
+
+      <div class="field field--feature">
+        <label>What should guests remember feeling after staying with you? <span class="opt">(optional)</span></label>
+        <textarea name="feeling" rows="2" placeholder="In your own words. One or two sentences is enough."></textarea>
+      </div>
+
+      <div class="field field--feature">
+        <label>How is this already expressed across your property? <span class="opt">(optional)</span></label>
+        <textarea name="expression" rows="2" placeholder="Through design, service, rituals, programs, events or values."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Which areas of the guest experience would you consider expressing this State through?</label>
+        <div class="checks" id="areaChecks">
+          <label class="check"><input type="checkbox" name="areas" value="In-room ritual"/> In-room ritual</label>
+          <label class="check"><input type="checkbox" name="areas" value="Arrival experience"/> Arrival experience</label>
+          <label class="check"><input type="checkbox" name="areas" value="Retail continuation"/> Retail continuation</label>
+          <label class="check"><input type="checkbox" name="areas" value="Post-stay relationship"/> Post-stay relationship</label>
+          <label class="check"><input type="checkbox" name="areas" value="Private guest community"/> Private guest community</label>
+          <label class="check"><input type="checkbox" name="areas" value="All of the above" id="areasAll"/> All of the above</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Does the property currently work with a signature scent?</label>
+        <div class="radios">
+          <label><input type="radio" name="scent-status" value="Yes, ambient only"/> Yes — ambient scent only.</label>
+          <label><input type="radio" name="scent-status" value="Yes, ambient and personal"/> Yes — ambient scent and something personal for guests.</label>
+          <label><input type="radio" name="scent-status" value="No"/> No.</label>
+          <label><input type="radio" name="scent-status" value="Exploring"/> Currently exploring.</label>
+        </div>
+      </div>
+
+      <div class="form__submit">
+        <button type="submit" class="btn btn--copper btn--submit">Submit interest</button>
+      </div>
+      <p class="form__error" id="formError">Please complete the required fields.</p>
+    </form>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="footer__brand">
+    <span class="fb-title">State-Based Hospitality System</span>
+    <span class="fb-by">by Jardin du Désert</span>
+    <span class="fb-house">Private Intellectual Fragrance House</span>
+  </div>
+</footer>
+
+
+<div class="submitted" id="submitted" role="dialog" aria-modal="true" aria-labelledby="subHeading" aria-hidden="true">
+  <a class="sub-logo" href="#top" aria-label="Jardin du Désert"><img id="subLogo" alt="Jardin du Désert"></a>
+  <button class="sub-close" id="subClose" aria-label="Close">×</button>
+  <div class="sub-stage">
+    <div class="sub-globe">
+      <svg viewBox="0 0 620 620" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="subCopper" cx="35%" cy="35%">
+          <stop offset="0%" stop-color="#FFF0DA"/>
+          <stop offset="40%" stop-color="#F0C79B"/>
+          <stop offset="75%" stop-color="#E6B98A"/>
+          <stop offset="100%" stop-color="#D6A06D"/>
+        </radialGradient>
+        </defs>
+        <g class="sub-grid">
+          <circle class="sub-outer" cx="310" cy="310" r="260"/>
+          <ellipse cx="310" cy="310" rx="260" ry="55"/>
+          <ellipse cx="310" cy="310" rx="260" ry="115"/>
+          <ellipse cx="310" cy="310" rx="260" ry="175"/>
+          <ellipse cx="310" cy="310" rx="260" ry="225"/>
+          <ellipse cx="310" cy="310" rx="55"  ry="260"/>
+          <ellipse cx="310" cy="310" rx="115" ry="260"/>
+          <ellipse cx="310" cy="310" rx="175" ry="260"/>
+          <ellipse cx="310" cy="310" rx="225" ry="260"/>
+          <line x1="310" y1="50"  x2="310" y2="570"/>
+          <line x1="50"  y1="310" x2="570" y2="310"/>
+        </g>
+        <!-- 22 stars scattered around the sphere -->
+        <circle class="sub-dot" cx="180" cy="180" r="3.5" style="--dur:4.2s;--dly:.1s"/>
+        <circle class="sub-dot" cx="440" cy="150" r="3"   style="--dur:5.0s;--dly:.4s"/>
+        <circle class="sub-dot" cx="500" cy="270" r="3.5" style="--dur:3.6s;--dly:.8s"/>
+        <circle class="sub-dot" cx="380" cy="120" r="2.8" style="--dur:4.6s;--dly:1.2s"/>
+        <circle class="sub-dot" cx="145" cy="260" r="3.2" style="--dur:5.4s;--dly:.3s"/>
+        <circle class="sub-dot" cx="220" cy="420" r="3.5" style="--dur:4.0s;--dly:1.6s"/>
+        <circle class="sub-dot" cx="410" cy="440" r="3.2" style="--dur:3.8s;--dly:2.0s"/>
+        <circle class="sub-dot" cx="330" cy="200" r="3"   style="--dur:4.4s;--dly:.5s"/>
+        <circle class="sub-dot" cx="255" cy="150" r="2.8" style="--dur:5.1s;--dly:2.4s"/>
+        <circle class="sub-dot" cx="480" cy="380" r="3.5" style="--dur:3.5s;--dly:1.8s"/>
+        <circle class="sub-dot" cx="130" cy="360" r="3"   style="--dur:4.8s;--dly:.7s"/>
+        <circle class="sub-dot" cx="290" cy="470" r="3.5" style="--dur:4.2s;--dly:2.6s"/>
+        <circle class="sub-dot" cx="380" cy="330" r="4"   style="--dur:3.4s;--dly:.9s"/>
+        <circle class="sub-dot" cx="200" cy="300" r="2.8" style="--dur:5.2s;--dly:2.2s"/>
+        <circle class="sub-dot" cx="470" cy="200" r="3.5" style="--dur:4.5s;--dly:1.0s"/>
+        <circle class="sub-dot" cx="320" cy="380" r="3"   style="--dur:3.7s;--dly:3.0s"/>
+        <circle class="sub-dot" cx="360" cy="490" r="3.5" style="--dur:4.9s;--dly:1.4s"/>
+        <circle class="sub-dot" cx="250" cy="240" r="3"   style="--dur:4.3s;--dly:2.8s"/>
+        <circle class="sub-dot" cx="415" cy="250" r="3.5" style="--dur:5.3s;--dly:.6s"/>
+        <circle class="sub-dot" cx="170" cy="440" r="2.8" style="--dur:3.9s;--dly:1.7s"/>
+        <circle class="sub-dot" cx="470" cy="470" r="3"   style="--dur:4.6s;--dly:2.5s"/>
+        <circle class="sub-dot" cx="285" cy="325" r="4.5" style="--dur:4.0s;--dly:1.1s"/>
+      </svg>
+    </div>
+    <h2 class="sub-heading" id="subHeading">Your request has been received.</h2>
+    <p class="sub-note"><span>Jardin du Désert will review your property</span><span>and contact you privately.</span></p>
+    <img class="sub-center-logo" id="subLogoCenter" alt="Jardin du Désert">
+    <p class="sub-est"><span>Jardin du Désert · Est. 2022</span><span>State-Based Hospitality · Est. 2026</span></p>
+  </div>
+</div>
+
+<script>
+  // Hero uses pre-wrapped .tw spans with staggered CSS animation delays.
+
+  // Typeset any [data-typeset] element on scroll into view: split words, stagger reveal.
+  (function initTypesetOnScroll(){
+    const speed = 180; // ms per word
+    const targets = document.querySelectorAll('[data-typeset]');
+    const typesetEl = (el) => {
+      if (el.dataset.typesetDone) return;
+      el.dataset.typesetDone = '1';
+      let acc = 0;
+      const walk = (node) => {
+        if (node.nodeType === Node.TEXT_NODE){
+          const parts = node.textContent.split(/(\s+)/);
+          const frag = document.createDocumentFragment();
+          for (const p of parts){
+            if (!p) continue;
+            if (/^\s+$/.test(p)) frag.appendChild(document.createTextNode(p));
+            else {
+              const s = document.createElement('span');
+              s.className = 'tw';
+              s.textContent = p;
+              s.style.animationDelay = acc + 'ms';
+              acc += speed;
+              frag.appendChild(s);
+            }
+          }
+          node.replaceWith(frag);
+        } else if (node.nodeType === Node.ELEMENT_NODE){
+          if (node.tagName === 'EM'){
+            // wrap the em as one word
+            const s = document.createElement('span');
+            s.className = 'tw';
+            s.style.animationDelay = acc + 'ms';
+            acc += speed;
+            node.parentNode.insertBefore(s, node);
+            s.appendChild(node);
+            return;
+          }
+          if (node.tagName === 'BR') return;
+          Array.from(node.childNodes).forEach(walk);
+        }
+      };
+      Array.from(el.childNodes).forEach(walk);
+    };
+    const ioT = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting){ typesetEl(e.target); ioT.unobserve(e.target); } });
+    }, { threshold: 0.3 });
+    targets.forEach(t => ioT.observe(t));
+  })();
+
+  const hdr = document.getElementById('hdr');
+  const tonalFlow = document.getElementById('tonalFlow');
+  const selectionSec = document.getElementById('selection');
+  const whyNow = document.getElementById('why-now');
+  const proofs = whyNow ? whyNow.querySelectorAll('.proof') : [];
+  const valueBoxes = document.querySelectorAll('#value .value');
+
+  const onScroll = () => {
+    if (window.scrollY > 8) hdr.classList.add('scrolled');
+    else hdr.classList.remove('scrolled');
+
+    // on-dark header: only when tonal flow has reached ~55% (past midpoint)
+    let onDark = false;
+    if (tonalFlow) {
+      const r = tonalFlow.getBoundingClientRect();
+      const h = tonalFlow.offsetHeight;
+      const p = (60 - r.top) / h;
+      if (p >= 0.55 && p <= 1) onDark = true;
+    }
+    hdr.classList.toggle('on-dark', onDark);
+
+    // pin-scroll stages (Missing Layer, System)
+    document.querySelectorAll('[data-scene]').forEach(section => {
+      const stage = section.querySelector('.pin-stage') || section;
+      const steps = parseInt(section.dataset.steps || '3', 10);
+      const rect = section.getBoundingClientRect();
+      const total = section.offsetHeight - window.innerHeight;
+      if (total <= 0) return;
+      const scrolled = Math.max(0, -rect.top);
+      const p = Math.min(1, Math.max(0, scrolled / total));
+      for (let i = 1; i <= steps; i++) stage.classList.remove('stage-' + i);
+      const idx = Math.max(1, Math.min(steps, Math.floor(p * steps) + 1));
+      stage.classList.add('stage-' + idx);
+      stage.style.setProperty('--p', p.toFixed(3));
+    });
+
+    // Why Now — dim/active by which proof crosses viewport center
+    if (proofs.length) {
+      const mid = window.innerHeight * 0.55;
+      let activeIdx = -1;
+      proofs.forEach((p, i) => {
+        const r = p.getBoundingClientRect();
+        if (r.top < mid && r.bottom > 0) activeIdx = i;
+      });
+      proofs.forEach((p, i) => {
+        p.classList.toggle('dim', activeIdx !== -1 && i !== activeIdx);
+      });
+    }
+
+    // Selection stars scene
+    if (selectionSec) {
+      const r = selectionSec.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.7) selectionSec.classList.add('in-selection');
+    }
+    // Selection narrative scene — separate trigger
+    const narr = document.getElementById('selection-narrative');
+    if (narr){
+      const r = narr.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.7) narr.classList.add('in-narrative');
+    }
+
+    // Value — traveling light through boxes
+    if (valueBoxes.length) {
+      const mid = window.innerHeight * 0.55;
+      let lit = -1;
+      valueBoxes.forEach((b, i) => {
+        const r = b.getBoundingClientRect();
+        const c = (r.top + r.bottom) / 2;
+        if (Math.abs(c - mid) < 240) lit = i;
+      });
+      valueBoxes.forEach((b, i) => b.classList.toggle('lit', i === lit));
+    }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  const io2 = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io2.unobserve(e.target); }
+  }, { threshold: 0.25 });
+  document.querySelectorAll('.diagram, .stars22, #faq, #reviewForm').forEach(el => io2.observe(el));
+
+  // FAQ: only one open at a time
+  const faq = document.getElementById('faq');
+  if (faq) {
+    faq.querySelectorAll('details').forEach(d => {
+      d.addEventListener('toggle', () => {
+        if (d.open) faq.querySelectorAll('details').forEach(o => { if (o !== d) o.open = false; });
+      });
+    });
+  }
+
+  const form = document.getElementById('reviewForm');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const required = form.querySelectorAll('[required]');
+    let ok = true;
+    required.forEach(f => { if (!f.value.trim()) { f.style.borderBottomColor = '#C58452'; ok = false; } });
+    const err = document.getElementById('formError');
+    if (!ok){
+      if (err) err.classList.add('on');
+      const first = form.querySelector('[required]:placeholder-shown, [required]');
+      const empty = Array.from(form.querySelectorAll('[required]')).find(f => !f.value.trim());
+      if (empty) empty.focus({ preventScroll:false });
+      return;
+    }
+    if (err) err.classList.remove('on');
+    openSubmitted();
+  });
+
+  // stars appear one by one when the Twenty-Two scene comes into view
+  (function(){
+    const sky = document.getElementById('sky22');
+    if (!sky) return;
+    new IntersectionObserver((es, o) => {
+      es.forEach(e => { if (e.isIntersecting){ sky.classList.add('in'); o.disconnect(); } });
+    }, { threshold: 0.2 }).observe(sky);
+  })();
+
+  // real typing: split [data-typing] text into letters, each appears in turn
+  (function(){
+    document.querySelectorAll('[data-typing]').forEach(el => {
+      const speed = parseInt(el.dataset.typing, 10) || 50;
+      let i = 0;
+      const walk = (node) => {
+        if (node.nodeType === Node.TEXT_NODE){
+          const frag = document.createDocumentFragment();
+          node.textContent.split(/(\s+)/).forEach(part => {
+            if (!part) return;
+            if (/^\s+$/.test(part)){ frag.appendChild(document.createTextNode(' ')); return; }
+            const w = document.createElement('span'); w.className = 'wd';
+            for (const c of part){
+              const ch = document.createElement('span'); ch.className = 'ch';
+              ch.textContent = c; ch.style.animationDelay = (150 + i * speed) + 'ms';
+              w.appendChild(ch); i++;
+            }
+            frag.appendChild(w);
+          });
+          node.replaceWith(frag);
+        } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR'){
+          Array.from(node.childNodes).forEach(walk);
+        }
+      };
+      Array.from(el.childNodes).forEach(walk);
+    });
+    const sec = document.getElementById('selection');
+    if (sec) new IntersectionObserver((es, o) => {
+      es.forEach(e => { if (e.isIntersecting){ sec.classList.add('in-sky'); o.disconnect(); } });
+    }, { threshold: 0.15 }).observe(sec);
+  })();
+
+  // globe fades in when it arrives
+  (function(){
+    const g = document.getElementById('jgWrap');
+    if (!g) return;
+    new IntersectionObserver((es, o) => {
+      es.forEach(e => { if (e.isIntersecting){ g.classList.add('in'); o.disconnect(); } });
+    }, { threshold: 0.2 }).observe(g);
+  })();
+
+  // the 22 stars leave the sky behind "Twenty-two distinct hospitality worlds"
+  // and come down onto the globe as you scroll
+  (function(){
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const intro = document.getElementById('selection');
+    const globe = document.getElementById('globe-scene');
+    const stars = Array.from(document.querySelectorAll('#sky22 .sky-star'));
+    const dots  = Array.from(document.querySelectorAll('#globe-scene .jg-dot'));
+    if (!intro || !globe || stars.length !== 22 || dots.length !== 22) return;
+
+    // pair top stars with top dots so they fall straight down, not across
+    const byY = (arr) => arr.map((el, i) => ({ el, i, y: el.getBoundingClientRect().top }))
+                            .sort((a, b) => a.y - b.y).map(o => o.el);
+    let pairs = null;
+    const layer = document.createElement('div');
+    layer.className = 'star-flight';
+    const flyers = stars.map(() => { const f = document.createElement('span'); layer.appendChild(f); return f; });
+    document.body.appendChild(layer);
+
+    const ease = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+    const clamp = v => Math.max(0, Math.min(1, v));
+    let ticking = false;
+
+    function frame(){
+      ticking = false;
+      if (!pairs){ const S = byY(stars), D = byY(dots); pairs = S.map((s, k) => [s, D[k]]); }
+      const iTop = intro.getBoundingClientRect().top;
+      const gTop = globe.getBoundingClientRect().top;
+      const dist = gTop - iTop;                       // intro height
+      const lead = window.innerHeight;                 // start as soon as the first stars come into view
+      const p = clamp((lead - iTop) / (lead + dist));  // 0 = section enters, 1 = globe at top
+      const body = document.body;
+      body.classList.toggle('stars-before-globe', p < 1);
+      if (window.__jgLand) window.__jgLand(p >= 1);
+      if (p <= 0 || p >= 1){ body.classList.remove('stars-flying'); return; }
+      body.classList.add('stars-flying');
+      pairs.forEach(([s, d], k) => {
+        const delay = (k / 21) * 0.12;               // top stars lead, very slightly
+        const t = clamp((p - delay) / 0.88);         // linear: every bit of scroll moves them
+        const a = s.getBoundingClientRect(), b = d.getBoundingClientRect();
+        const size = a.width + (b.width - a.width) * t;
+        const x = (a.left + a.width/2) + ((b.left + b.width/2) - (a.left + a.width/2)) * t;
+        const y = (a.top + a.height/2) + ((b.top + b.height/2) - (a.top + a.height/2)) * t;
+        const f = flyers[k];
+        f.style.opacity = getComputedStyle(s).opacity; // keep the fade-in + twinkle of each star
+        f.style.width = f.style.height = size.toFixed(1) + 'px';
+        f.style.transform = `translate(${(x - size/2).toFixed(1)}px, ${(y - size/2).toFixed(1)}px)`;
+      });
+    }
+    const req = () => { if (!ticking){ ticking = true; requestAnimationFrame(frame); } };
+    window.addEventListener('scroll', req, { passive: true });
+    window.addEventListener('resize', () => { pairs = null; req(); });
+    req();
+  })();
+
+  // start the page-1 typing when the line is well in view
+  (function(){
+    const t = document.getElementById('worldsTitle');
+    if (!t) return;
+    new IntersectionObserver((es, o) => {
+      es.forEach(e => { if (e.isIntersecting){ t.classList.add('typing'); o.disconnect(); } });
+    }, { threshold: 0.6 }).observe(t);
+  })();
+
+  (function(){
+    const sub = document.getElementById('worldsSub');
+    if (!sub) return;
+    new IntersectionObserver((es, o) => {
+      es.forEach(e => { if (e.isIntersecting){ sub.classList.add('in'); o.disconnect(); } });
+    }, { threshold: 0.6 }).observe(sub);
+  })();
+
+  // "All of the above" selects / clears every area
+  (function(){
+    const all = document.getElementById('areasAll');
+    if (!all) return;
+    const others = Array.from(document.querySelectorAll('#areaChecks input[name="areas"]')).filter(i => i !== all);
+    all.addEventListener('change', () => others.forEach(o => o.checked = all.checked));
+    others.forEach(o => o.addEventListener('change', () => { all.checked = others.every(x => x.checked); }));
+  })();
+
+  // menu: three copper lines open / close the full-screen menu
+  (function(){
+    const btn = document.getElementById('menuBtn'), menu = document.getElementById('siteMenu');
+    if (!btn || !menu) return;
+    const set = (open) => {
+      document.body.classList.toggle('menu-open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      menu.setAttribute('aria-hidden', open ? 'false' : 'true');
+    };
+    btn.addEventListener('click', () => set(!document.body.classList.contains('menu-open')));
+    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => set(false)));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
+  })();
+
+  // each cactus draws itself when its evidence comes into view
+  (function(){
+    const imgs = document.querySelectorAll('img[data-logo]');
+    const io = new IntersectionObserver((es) => {
+      es.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.src = './assets/jdd-logo.webp?v=' + Date.now() + Math.random().toString(36).slice(2,6);
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.6 });
+    imgs.forEach(i => io.observe(i));
+  })();
+
+  // confirmation screen (globe) after Submit interest
+  function openSubmitted(){
+    const ov = document.getElementById('submitted');
+    const logo = document.getElementById('subLogo');
+    const stamp = Date.now();
+    if (logo) logo.src = './assets/jdd-logo.webp?s=' + stamp;
+    const cl = document.getElementById('subLogoCenter'); if (cl) cl.src = './assets/jdd-logo.webp?c=' + stamp;
+
+    ov.classList.add('on'); ov.setAttribute('aria-hidden','false');
+    document.body.classList.add('sub-open');
+  }
+  (function(){
+    const ov = document.getElementById('submitted');
+    const close = () => { ov.classList.remove('on'); ov.setAttribute('aria-hidden','true'); document.body.classList.remove('sub-open'); };
+    document.getElementById('subClose').addEventListener('click', close);
+    ov.querySelector('.sub-logo').addEventListener('click', close);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && ov.classList.contains('on')) close(); });
+  })();
+
+  // System: layers connect one by one on their own once the section is in view
+  (function(){
+    const sec = document.getElementById('system');
+    if (!sec) return;
+    const stage = sec.querySelector('.pin-stage');
+    const set = n => { for (let i = 1; i <= 8; i++) stage.classList.remove('stage-' + i); stage.classList.add('stage-' + n); };
+    set(1);
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    new IntersectionObserver((es, o) => {
+      es.forEach(e => {
+        if (!e.isIntersecting) return;
+        o.disconnect();
+        if (reduce){ set(8); return; }
+        let n = 1;
+        const step = () => { n++; set(n); if (n < 8) setTimeout(step, n === 7 ? 1500 : 1200); };
+        setTimeout(step, 900);
+      });
+    }, { threshold: 0.45 }).observe(sec);
+  })();
+
+
+  // 22 cactus logos grow out of the 22 landed stars
+  (function(){
+    const wrap = document.getElementById('jgWrap');
+    if (!wrap) return;
+    const dots = Array.from(wrap.querySelectorAll('.jg-dot'));
+    const layer = document.createElement('div'); layer.className = 'jg-logos';
+    const logos = dots.map((d, i) => {
+      const img = document.createElement('img');
+      img.className = 'jg-logo'; img.alt = '';
+      img.style.left = (parseFloat(d.getAttribute('cx')) / 620 * 100) + '%';
+      img.style.top  = (parseFloat(d.getAttribute('cy')) / 620 * 100) + '%';
+      img.style.transitionDelay = (i * 0.045).toFixed(2) + 's';
+      // size, brightness and breathing follow the star it grows from
+      const r = parseFloat(d.getAttribute('r')) || 3.5;
+      img.style.height = (5.4 * r / 3.5).toFixed(2) + '%';
+      img.style.setProperty('--op', (0.45 + (r - 2.8) / (4.5 - 2.8) * 0.55).toFixed(2));
+      img.style.setProperty('--dur', d.style.getPropertyValue('--dur') || '4s');
+      img.style.setProperty('--dly', d.style.getPropertyValue('--dly') || '0s');
+      layer.appendChild(img);
+      return img;
+    });
+    wrap.appendChild(layer);
+    let landed = false;
+    window.__jgLand = (on) => {
+      if (on === landed) return;
+      landed = on;
+      if (on){
+
+      }
+      wrap.classList.toggle('landed', on);
+    };
+    // if motion is reduced there is no flight: show the logos when the globe is in view
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      new IntersectionObserver((es, o) => { es.forEach(e => { if (e.isIntersecting){ window.__jgLand(true); o.disconnect(); } }); }, { threshold: .3 }).observe(wrap);
+    }
+  })();
+
+  // finished cactus logos sit on the globe, sized and lit like the stars they replace
+  (function(){
+    const wrap = document.querySelector('.sub-globe');
+    if (!wrap) return;
+    const layer = document.createElement('div'); layer.className = 'sub-logos';
+    wrap.querySelectorAll('.sub-dot').forEach(d => {
+      const r = parseFloat(d.getAttribute('r')) || 3.5;
+      const img = document.createElement('img');
+      img.className = 'sub-cactus'; img.alt = ''; img.src = './assets/jdd-logo-static.png';
+      img.style.left = (parseFloat(d.getAttribute('cx')) / 620 * 100) + '%';
+      img.style.top  = (parseFloat(d.getAttribute('cy')) / 620 * 100) + '%';
+      img.style.height = (5.4 * r / 3.5).toFixed(2) + '%';
+      img.style.setProperty('--op', (0.45 + (r - 2.8) / (4.5 - 2.8) * 0.55).toFixed(2));
+      img.style.setProperty('--dur', d.style.getPropertyValue('--dur') || '4s');
+      img.style.setProperty('--dly', d.style.getPropertyValue('--dly') || '0s');
+      layer.appendChild(img);
+    });
+    wrap.appendChild(layer);
+  })();
+
+
+  // final picture: 11 cacti + 11 points, scattered (a fixed, irregular mix)
+  (function(){
+    const CACTUS = new Set([0, 3, 4, 7, 9, 10, 13, 15, 16, 19, 21]);
+    const mix = (wrapSel, dotSel, logoSel) => {
+      const wrap = document.querySelector(wrapSel); if (!wrap) return;
+      const dots = wrap.querySelectorAll(dotSel), logos = wrap.querySelectorAll(logoSel);
+      dots.forEach((d, i) => { if (CACTUS.has(i)) d.classList.add('as-cactus'); });
+      logos.forEach((l, i) => { if (!CACTUS.has(i)) l.classList.add('is-off'); });
+    };
+    mix('#jgWrap', '.jg-dot', '.jg-logo');
+    mix('.sub-globe', '.sub-dot', '.sub-cactus');
+  })();
+
+  (function(){
+    const KEEP = {0:'strong', 2:'soft', 6:'strong', 10:'soft', 14:'soft'};
+    document.querySelectorAll('.sub-globe .sub-dot').forEach((d, i) => {
+      if (!(i in KEEP)) return;
+      d.classList.add('keep', KEEP[i]);
+      d.setAttribute('r', KEEP[i] === 'strong' ? '5' : '3');
+    });
+  })();
+
+  // cactus pops up on the "t" and draws itself when the author section is in view
+  (function(){
+    const c = document.getElementById('wmCactus');
+    if (!c) return;
+    new IntersectionObserver((es, o) => {
+      es.forEach(e => {
+        if (!e.isIntersecting) return;
+        o.disconnect();
+        c.src = './assets/jdd-logo.webp?t=' + Date.now();
+        requestAnimationFrame(() => c.classList.add('on'));
+      });
+    }, { threshold: 0.6 }).observe(c.parentElement);
+  })();
+</script>
+
+</body>
+</html>
