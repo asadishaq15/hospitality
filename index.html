@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Jardin du Désert — State-Based Hospitality System</title>
 <meta name="description" content="A private intellectual system for 22 selected hospitality groups worldwide. One State. One scent. One ritual. One private guest access." />
+<link rel="icon" type="image/png" href="assets/favicon.png" />
+<link rel="apple-touch-icon" href="assets/favicon.png" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -3193,6 +3195,7 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
   // Hero uses pre-wrapped .tw spans with staggered CSS animation delays.
 
@@ -3340,22 +3343,99 @@
     });
   }
 
+  const EMAILJS_PUBLIC_KEY = 'e67cPgbc72GR3pOv0';
+  const B2B_SERVICE_ID = 'hospitality';
+  const B2B_TEMPLATE_ID = 'template_ioa2sav';
+  if (window.emailjs) window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
   const form = document.getElementById('reviewForm');
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const required = form.querySelectorAll('[required]');
     let ok = true;
-    required.forEach(f => { if (!f.value.trim()) { f.style.borderBottomColor = '#C58452'; ok = false; } });
+    required.forEach(f => {
+      f.style.borderBottomColor = '';
+      if (!f.value.trim()) { f.style.borderBottomColor = '#C58452'; ok = false; }
+    });
     const err = document.getElementById('formError');
     if (!ok){
+      if (err) err.textContent = 'Please complete the required fields.';
       if (err) err.classList.add('on');
-      const first = form.querySelector('[required]:placeholder-shown, [required]');
       const empty = Array.from(form.querySelectorAll('[required]')).find(f => !f.value.trim());
       if (empty) empty.focus({ preventScroll:false });
       return;
     }
     if (err) err.classList.remove('on');
-    openSubmitted();
+    const submitBtn = form.querySelector('.btn--submit');
+    const originalLabel = submitBtn ? submitBtn.textContent : '';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+    }
+
+    const checkedAreas = Array.from(form.querySelectorAll('input[name="areas"]:checked')).map(input => input.value);
+    const scentStatus = form.querySelector('input[name="scent-status"]:checked');
+    const submittedAt = new Date().toLocaleString([], {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    const conceptLines = [
+      `Name: ${form.name.value}`,
+      `Title / Role: ${form.title.value}`,
+      `Guest feeling: ${form.feeling.value || '—'}`,
+      `Current expression: ${form.expression.value || '—'}`,
+      `Guest experience areas: ${checkedAreas.length ? checkedAreas.join(', ') : '—'}`,
+      `Signature scent status: ${scentStatus ? scentStatus.value : '—'}`
+    ];
+    const templateParams = {
+      property: form.property.value,
+      location: form.location.value,
+      concept: conceptLines.join('\n'),
+      email: form.email.value,
+      realm: 'hospitality',
+      state_name: 'Twenty-Two Hospitality Interest',
+      state_core: form.feeling.value || '—',
+      state_biz: checkedAreas.length ? checkedAreas.join(', ') : '—',
+      state_status: scentStatus ? scentStatus.value : '—',
+      name: form.name.value,
+      title: form.title.value,
+      feeling: form.feeling.value,
+      expression: form.expression.value,
+      areas: checkedAreas.join(', '),
+      scent_status: scentStatus ? scentStatus.value : '',
+      time: submittedAt,
+      message: [
+        `Property: ${form.property.value}`,
+        `Location: ${form.location.value}`,
+        `Name: ${form.name.value}`,
+        `Title / Role: ${form.title.value}`,
+        `Email: ${form.email.value}`,
+        `Guest feeling: ${form.feeling.value || '—'}`,
+        `Current expression: ${form.expression.value || '—'}`,
+        `Guest experience areas: ${checkedAreas.length ? checkedAreas.join(', ') : '—'}`,
+        `Signature scent status: ${scentStatus ? scentStatus.value : '—'}`
+      ].join('\n')
+    };
+
+    try {
+      if (!window.emailjs) throw new Error('EmailJS is not available');
+      await window.emailjs.send(B2B_SERVICE_ID, B2B_TEMPLATE_ID, templateParams);
+      openSubmitted();
+    } catch (error) {
+      console.error('EmailJS B2B error:', error);
+      if (err) {
+        err.textContent = 'Something went wrong. Please try again.';
+        err.classList.add('on');
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalLabel;
+      }
+    }
   });
 
   // stars appear one by one when the Twenty-Two scene comes into view
